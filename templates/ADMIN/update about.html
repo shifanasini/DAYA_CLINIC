@@ -1,0 +1,29 @@
+
+
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h2 align="center">UPDATE ABOUT</h2><br><br>
+<form action="/myapp/adm_update_about/" method="post" enctype="multipart/form-data">
+<input type="hidden" NAME="id" value="{{ data.hid }}" >
+    {% csrf_token %}
+<table class="table table-bordered" style="width: 400px;" align="center">
+
+  <tr>
+    <td  align="center">Enter About Daya </td>
+    <td><textarea name="about" cols="45" rows="5" class="form-control" required>{{ data.about }}</textarea></td>
+  </tr>
+    <tr>
+    <td  align="center">Image </td>
+    <td> <img src="{{ data.photo }}" height="50px"/><input name="fileField" type="file" class="form-control"/></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center"><input name="Add" Value="Add"type="submit" class="btn btn-success" /></td>
+  </tr>
+</table>
+</form><style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}</style>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends  'adm_index.html' %}
+{% block body %}
+    <h1 align="center">UPDATE SERVICES</h1>
+<form action="/myapp/adm_add_services/" method="POST">
+    {% csrf_token %}
+<table border="" align="center">
+  <tr>
+    <td >Enter services</td>
+    <td ><textarea name="service" cols="45" rows="5"></textarea></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center"><input name="Add" Value="Add"type="SUBMIT" /></td>
+  </tr>
+</table>
+</form>
+ {% endblock %}

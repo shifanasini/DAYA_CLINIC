@@ -1,0 +1,41 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">ADD CONTACT INFO</h1><br><br>
+<form action="/myapp/adm_add_contact/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+<table  class="table table-bordered" style="width: 400px;" align="center">
+  <tr>
+    <td>LOCATION HINT</td>
+    <td><input name="loc_hint" type="text" class="form-control" value="{{ data.loc_hint }}"/></td>
+  </tr>
+  <tr>
+    <td>CONTACT NUMBER</td>
+    <td><input name="contact_number" type="text" class="form-control"  required pattern="[789][0-9]{9}"value="{{ data.phone_number}}"/></td>
+  </tr>
+  <tr>
+    <td>MAIL ID</td>
+    <td><input name="mail" type="text" class="form-control" value="{{ data.email }}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}"/></td>
+  </tr>
+  <tr>
+    <td>LATITUDE</td>
+    <td><input name="latitude" type="text" class="form-control" value="{{ data.latitude }}"/></td>
+  </tr>
+     <tr>
+    <td>LOGITUDE</td>
+    <td><input name="longitude" type="text" class="form-control" value="{{ data.longitude }}"/></td>
+  </tr></tr>
+     <tr>
+
+    <td> <input type="submit" value="ADD" class="btn btn-success" align="center"/></td>
+  </tr>
+
+</table>
+
+</form>
+<style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}
+</style>
+{% endblock %}

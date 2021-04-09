@@ -1,0 +1,61 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">VIEW EMPLOYEES</h1><br><br>
+<form id="form1" name="form1" method="post" action="/myapp/adm_view_employee/">
+{% csrf_token %}
+<table align="center">
+
+    <tr>
+        <td>Employee Name &nbsp;&nbsp;</td>
+        <td><input type="text" name="text" class="form-control"/></td>
+        <td></td>
+        <td><input type="submit" name="search" value="Go" class="btn btn-success"/></td>
+    </tr>
+</table>
+<p></p>
+<table class="table table-bordered" style="width: 1300px" align="center">
+  <tr>
+    <th >Sl.No</th>
+    <th>Name</th>
+    <th>Date 0f Birth</th>
+    <th>Gender</th>
+    <th>Type</th>
+    <th >Address</th>
+
+    <th ><p>Phone Number</p></th>
+      <th>Qualification</th>
+    <th>Email Id</th>
+    <th>Photo</th>
+    <th COLSPAN="2"></th>
+  </tr>
+    {% for i in data %}
+  <tr>
+
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.emp_name }}</td>
+    <td>{{  i.dob}}</td>
+    <td>&nbsp;{{ i.gender }}</td>
+    <td>{{ i.emp_type }}</td>
+    <td>{{i.housename }}<br>{{ i.place }}<br>{{ i.district }}<br>{{ i.state }}<br>{{ i.pincode }}</td>
+    <td>&nbsp;{{ i.phone_number }}</td>
+    <td>&nbsp;{{ i.qualification }}</td>
+      <td>{{ i.emial_Id }}</td>
+
+    <td>&nbsp;<img src="{{  i.photo}}"  height="100" width="100" alt=""/></td>
+
+
+    <td align="center"><a href="\myapp\adm_edit_employee\{{ i.pk }}">UPDATE</a></td>
+    <td align="center"><a href="\myapp\adm_delete_employee\ {{ i.pk }}">DELETE</a></td>
+  </tr>
+    {% endfor %}
+</table>
+</form>
+<style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+</style>
+{% endblock %}

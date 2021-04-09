@@ -1,0 +1,25 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">View Tips</h1><br><br>
+<form action="" method="get">
+<table class="table table-bordered" style="width: 1300px" align="center">
+  <tr>
+    <th >Sl.No</th>
+    <th >Tips</th>
+    <th>Date</th>
+    <th colspan="2"></th>
+  </tr>
+    {% for i in data %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.tips }}</td>
+    <td>{{ i.date }}</td>
+    <td align="center"><a href="\myapp\adm_edit_tip\{{ i.id }}">Edit</a></td>
+    <td align="center"><a href="\myapp\adm_delete_tips\{{ i.pk }}">Delete</a></td>
+  </tr>
+    {% endfor %}
+</table>
+
+
+</form>
+{% endblock %}

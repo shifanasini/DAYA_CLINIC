@@ -1,0 +1,22 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">ADD SERVICES</h1><br><br>
+<form action="/myapp/adm_add_services/" method="POST">
+    {% csrf_token %}
+<table class="table table-bordered" style="width: 400px;" align="center">
+  <tr>
+    <td >Enter services</td>
+    <td ><textarea name="service" cols="45" rows="5" class="form-control" required></textarea></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center"><input name="Add" Value="Add" type="SUBMIT" class="btn btn-success" /></td>
+  </tr>
+</table>
+</form><style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}
+</style>
+{% endblock %}

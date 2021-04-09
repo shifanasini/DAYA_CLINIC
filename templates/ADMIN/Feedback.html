@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% extends  'adm_index.html' %}
+{% block body %}
+<h1 align="center">View Feedback</h1>
+<form action="/myapp/adm_feedback/" method="post">
+<table class="table table-bordered">
+  <tr>
+    <th>Sl.No</th>
+    <th>Patient Name</th>
+    <th>Feedback</th>
+      <th>Date</th>
+      <th></th>
+    
+  </tr>
+    {% for i in data %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.PATIENT.patient_name }}</td>
+    <td >{{ i.feedback }}</td>
+    <td >{{ i.date}}</td>
+    <td ><a href="">Reply</a></td>
+  </tr>
+    {% endfor %}
+</table>
+
+
+</form>
+{% endblock %}

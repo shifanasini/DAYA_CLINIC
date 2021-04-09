@@ -1,0 +1,32 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">VIEW ATTENDANCE</h1><br><br>
+<form action="/myapp/adm_view_attendance/" method="post">
+<table class="table table-bordered"style="width: 1300px" align="center">
+  <tr>
+    <th>Sl.No</th>
+    <th >Employee Name</th>
+    <th >Employee Type</th>
+    <th >Date</th>
+     <th>From time</th>
+      <th>To time</th>
+      <th>Status</th>
+
+  </tr>
+     {% for i in data %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.EMPLOYEE.emp_name}}</td>
+    <td>{{ i.EMPLOYEE.emp_type}}</td>
+    <td>{{  i.date}}</td>
+    <td>{{  i.from_time}}</td>
+    <td>{{  i.to_time}}</td>
+    <td>{{  i.status}}</td>
+
+  </tr>
+    {% endfor %}
+</table>
+
+
+</form>
+{% endblock %}

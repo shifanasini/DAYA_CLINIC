@@ -1,0 +1,54 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">UPDATE SCHEDULE</h1><br>
+    <br>
+<form action="/myapp/adm_update_schedule/" method="post">
+{% csrf_token %}
+<table class="table table-bordered" style="width: 400px" align="center">
+  <tr>
+
+    <td>Doctor Name</td>
+    <td><select name="select" class="form-control" required>
+        {% for i in data1 %}
+            <option value="{{ i.id }}">{{ i.emp_name }}</option>
+        {% endfor %}
+
+
+    </select></td>
+  </tr>
+  <tr>
+    <td>Day</td>
+    <td><select name="select2" class="form-control" required>
+        <option>{{ data.day }}</option>
+        <OPTION>MONDAY</OPTION>
+        <OPTION>TUESDAY</OPTION>
+        <OPTION>WEDNESDAY</OPTION>
+        <OPTION>THURSDAY</OPTION>
+        <OPTION>FRIDAY</OPTION>
+        <OPTION>SATURDAY</OPTION>
+    </select></td>
+  </tr>
+  <tr>
+    <td>From time</td>
+    <td><input name="txt_frm" type="time" class="form-control" value="{{ data.from_time }}" required/></td>
+  </tr>
+  <td>To time</td>
+    <td><input name="txt_to" type="time" class="form-control" required value="{{ data.to_time }}"/></td>
+  </tr>
+ <tr>
+    <td >Booking Fee</td>
+    <td><input name="fee" type="text"   class="form-control" required value="{{ data.fee }}"/></td>
+ </tr>
+  <tr>
+    <td ></td>
+    <td><input name="input" type="submit"  value="Schedule" class="btn btn-success"/></td>
+  </tr>
+  
+</table>
+    <style>
+     .form-control{
+         background-color: #ffffff;
+         color:#000000;
+         }
+    </style>
+{% endblock %}

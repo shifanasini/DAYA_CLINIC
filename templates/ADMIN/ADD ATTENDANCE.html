@@ -1,0 +1,39 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">ADD ATTENDANCE</h1><br><br>
+
+<form action="\myapp\adm_add_attendance\" method="post">
+{% csrf_token %}
+
+<table class="table table-bordered" style="width: 1300px" align="center">
+  <tr>
+    <th>Sl.No</th>
+    <th>EMPLOYEE NAME</th>
+    <th>EMPLOYEE TYPE</th>
+
+    <th></th>
+
+  </tr>
+ {% for i in data %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+      <td>{{ i.emp_name }}</td>
+      <td>{{ i.emp_type }}</td>
+
+
+
+    <td><input name="attendance" type="checkbox" value="{{ i.id }}" {% if i.id in arr %} disabled {% endif %} /></td>
+  </tr>
+{% endfor %}
+</table>
+<table align="center" border="1">
+  <tr>
+    <td><input name="btn" type="submit" value="ADD ATTENDANCE" class="btn btn-success"/></td>
+  </tr>
+</table>
+
+
+</form>
+
+
+{% endblock %}

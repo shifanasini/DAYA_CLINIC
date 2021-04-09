@@ -1,0 +1,28 @@
+
+
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h2 align="center">ADD ABOUT</h2><br><br>
+<form action="/myapp/adm_add_about/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<table class="table table-bordered" style="width: 400px;" align="center">
+
+  <tr>
+    <td  align="center">Enter About Daya </td>
+    <td>&nbsp;<textarea name="about" cols="45" rows="5" class="form-control" required></textarea></td>
+  </tr>
+    <tr>
+    <td  align="center">Image </td>
+    <td> <input name="fileField" type="file" class="form-control" required/></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center"><input name="Add" Value="Add"type="submit" class="btn btn-success" /></td>
+  </tr>
+</table>
+</form><style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}</style>
+{% endblock %}

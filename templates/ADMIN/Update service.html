@@ -1,0 +1,20 @@
+{% extends  'adm_index.html' %}<input type="hidden" NAME="id" value="{{ data.hid }}" >
+{% block body %}
+
+<h1 align="center">UPDATE SERVICES</h1>
+<form action="/myapp/adm_update_service/" method="POST">
+<input type="hidden" NAME="id" value="{{ data.hid }}" >
+    {% csrf_token %}
+<table border="" align="center">
+  <tr>
+    <td >Enter services</td>
+    <td ><textarea name="service" cols="45" rows="5">{{ data.services }}</textarea></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td align="center"><input name="Add" Value="Add" type="SUBMIT" /></td>
+  </tr>
+</table>
+</form>
+
+{% endblock %}
