@@ -8,6 +8,7 @@ class Login(models.Model):
     class Meta:
         db_table="login"
 
+
 class Employee(models.Model):
 
     LOGIN=models.ForeignKey(Login,on_delete=models.CASCADE)
@@ -21,6 +22,7 @@ class Employee(models.Model):
     district=models.CharField(max_length=50)
     pincode=models.CharField(max_length=50)
     state=models.CharField(max_length=50)
+    #fee=models.CharField(max_length=50)
     emial_Id = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50)
     qualification = models.CharField(max_length=50)
@@ -35,7 +37,12 @@ class Tips(models.Model):
 
     class Meta:
         db_table = "tips"
+class book_fee(models.Model):
+    EMPLOYEE = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    fee = models.CharField(max_length=50)
 
+    class Meta:
+        db_table="book_fee"
 class About(models.Model):
   about = models.CharField(max_length=400)
   date = models.DateField(max_length=50)
@@ -57,7 +64,7 @@ class Schedule(models.Model):
     day= models.CharField(max_length=50)
     from_time = models.TimeField(max_length=50)
     to_time = models.TimeField(max_length=50)
-    fee = models.CharField(max_length=50,default="100")
+    # fee = models.CharField(max_length=50,default="100")
 
     class Meta:
         db_table = "schedule"
@@ -92,7 +99,7 @@ class Patient(models.Model):
 
     patient_name = models.CharField(max_length=50)
     age = models.CharField(max_length=50)
-    dob = models.DateField(max_length=50)
+
     gender = models.CharField(max_length=50)
     place = models.CharField(max_length=50)
     housename = models.CharField(max_length=50)
@@ -101,8 +108,6 @@ class Patient(models.Model):
     state = models.CharField(max_length=50)
     emial_Id = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=50)
-    password=models.CharField(max_length=20)
-    conf_password=models.CharField(max_length=20)
 
     class Meta:
         db_table = "patient"

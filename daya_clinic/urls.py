@@ -59,11 +59,25 @@ urlpatterns = [
 
     path('adm_index/', views. adm_temp),
 
+    #doctor
+    path('doc_index/', views.doc_temp),
+    path('doc_view_schedule/', views.doc_view_schedule),
+
 
 
 
     #       android
     path("view_contact_info/", views.view_contact_info),
+    path("view_about_patient/", views.view_about_patient),
+    path("view_tips_patient/", views.view_tips_patient),
+    path("view_tips_more/", views.view_tips_more),
+    path("view_service_patient/", views.view_service_patient),
+    path("view_doctors/", views.view_doctors),
+    path("pa_registration/", views.pa_registration),
+    path("view_our_doctors/", views.view_our_doctors),
+    path("view_schedule/", views.view_schedule),
+    path("user_login/", views.user_login),
+
 
 
 

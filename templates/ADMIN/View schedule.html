@@ -9,20 +9,20 @@
     <th >Day</th>
      <th>From time</th>
       <th>To time</th>
-      <th>Booking Fee</th>
+{#      <th>Booking Fee</th>#}
       <th colspan="2">Change</th>
   </tr>
      {% for i in data %}
   <tr>
     <td>{{ forloop.counter }}</td>
-    <td>{{ i.EMPPLOYEE.emp_type}}</td>
+    <td>{{ i.EMPPLOYEE.emp_name}}</td>
     <td>{{  i.day}}</td>
     <td>{{  i.from_time}}</td>
     <td>{{  i.to_time}}</td>
-    <td>{{  i.fee}}</td>
+{#    <td>{{  i.fee}}</td>#}
 
     <td align="center"><a href="\myapp\adm_edit_schedule\{{ i.pk }}">Edit</a></td>
-  <td align="center"><a href="">Delete</a></td>
+  <td align="center"><a href="\myapp\adm_delete_schedule\{{ i.pk }}">Delete</a></td>
   </tr>
     {% endfor %}
 </table>

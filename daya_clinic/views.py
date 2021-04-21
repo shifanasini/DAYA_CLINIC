@@ -3,11 +3,11 @@ import random
 
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 # from Mod import *
 # Create your views here.
 from daya_clinic.models import Services, Tips, Employee, Login, Schedule, Feedback, About, Attandance, Contact_details, \
-    Patient
+    Patient, book_fee
 
 
 def homepage(request):
@@ -17,14 +17,14 @@ def adm_add_schedule(request):
         did=request.POST['select']
         day=request.POST['select2']
         from_time=request.POST['txt_frm']
-        fee=request.POST['fee']
+        # fee=request.POST['fee']
         to_time=request.POST['txt_to']
         doc_obj=Employee.objects.get(id=did)
         schedule_obj =Schedule()
         schedule_obj.day=day
         schedule_obj.from_time=from_time
         schedule_obj.to_time=to_time
-        schedule_obj.fee=fee
+        # schedule_obj.fee=fee
         schedule_obj.EMPPLOYEE=doc_obj
         schedule_obj.save()
         text = "<script>alert('Schedule Added');window.location='/myapp/adm_add_schedule/';</script>"
@@ -45,14 +45,14 @@ def adm_update_schedule(request):
         did = request.POST['select']
         day = request.POST['select2']
         from_time = request.POST['txt_frm']
-        fee = request.POST['fee']
+       # fee = request.POST['fee']
         to_time = request.POST['txt_to']
         doc_obj = Employee.objects.get(id=did)
         schedule_obj = Schedule.objects.get(id=id)
         schedule_obj.day = day
         schedule_obj.from_time = from_time
         schedule_obj.to_time = to_time
-        schedule_obj.fee = fee
+        #schedule_obj.fee = fee
         schedule_obj.EMPPLOYEE = doc_obj
         schedule_obj.save()
         text="<script>alert('Schedule Updated');window.location='/myapp/adm_view_schedule/';</script>"
@@ -94,6 +94,7 @@ def adm_employee_registration(request):
         emp_district = request.POST['txt_district']
         emp_pincode = request.POST['txt_pincode']
         emp_phno = request.POST['txt_phno']
+        emp_fee = request.POST['fee']
 
         emp_state = request.POST['txt_state']
         emp_qualification = request.POST['txt_qualification']
@@ -113,7 +114,6 @@ def adm_employee_registration(request):
         login_obj.save()
 
 
-
         employee_obj = Employee()
         employee_obj.emp_name= emp_name
 
@@ -124,6 +124,7 @@ def adm_employee_registration(request):
         employee_obj.district= emp_district
         employee_obj.pincode= emp_pincode
         employee_obj.state= emp_state
+        employee_obj.fee= emp_fee
         employee_obj.emial_Id= emp_email
         employee_obj.phone_number= emp_phno
         employee_obj.qualification= emp_qualification
@@ -131,6 +132,11 @@ def adm_employee_registration(request):
         employee_obj.LOGIN=login_obj
         employee_obj.emp_type=emp_type
         employee_obj.save()
+        emp=Employee.objects.get(pk=employee_obj.id)
+        book_obj = book_fee()
+        book_obj.fee = emp_fee
+        book_obj.EMPLOYEE =emp
+        book_obj.save()
 
         text = "<script>alert('Employee Registered');window.location='/myapp/adm_employee_registration/';</script>"
         return HttpResponse(text)
@@ -162,7 +168,7 @@ def adm_edit_employee(request,id):
 def adm_update_employee(request):
     if request.method == 'POST':
         emp_name = request.POST['txt_name']
-
+       # emp_fee = request.POST['fee']
         emp_dob = request.POST['txt_dob']
         emp_type = request.POST['selecttype']
         emp_gender = request.POST['radio_gender']
@@ -183,7 +189,7 @@ def adm_update_employee(request):
         employee_obj = Employee.objects.get(pk=hid_id)
         print(employee_obj)
         employee_obj.emp_name = emp_name
-
+        #employee_obj.fee = emp_fee
         employee_obj.dob = emp_dob
         employee_obj.gender = emp_gender
         employee_obj.place = emp_place
@@ -204,7 +210,11 @@ def adm_update_employee(request):
 
         employee_obj.emp_type = emp_type
         employee_obj.save()
-
+    emp = Employee.objects.get(pk=employee_obj.id)
+    # book_obj = book_fee()
+    # book_obj.fee = emp_fee
+    # book_obj.EMPLOYEE = emp
+    # book_obj.save()
     text = "<script>alert('Employee Updated');window.location='/myapp/adm_view_employee/';</script>"
     return HttpResponse(text)
     emp_obj = Employee.objects.all()
@@ -346,10 +356,12 @@ def adm_view_schedule(request):
     schedule_obj = Schedule.objects.all()
     return render(request,"ADMIN/View schedule.html",{'data':schedule_obj})
 def adm_delete_schedule(request,id):
-    schedule_obj=Tips.objects.get(id=id)
+    schedule_obj=Schedule.objects.get(id=id)
 
     schedule_obj.delete()
     schedule_obj = Schedule.objects.all()
+    text = "<script>alert('Schedule Deleted');window.location='/myapp/adm_view_schedule/';</script>"
+    return HttpResponse(text)
     return render(request, "ADMIN/View schedule.html", {'data': schedule_obj})
 
 def adm_view_services(request):
@@ -361,6 +373,7 @@ def adm_edit_service(request,id):
     serv_obj=Services.objects.get(id=id)
     print(id)
     request.session['uid']=id
+
     return render(request, "ADMIN/Update service.html", {'data': serv_obj})
 
 def adm_update_service(request):
@@ -376,7 +389,8 @@ def adm_update_service(request):
         service_obj.save()
 
         serev_obj = Services.objects.all()
-
+        text = "<script>alert('Service Updated');window.location='/myapp/adm_view_services/';</script>"
+        return HttpResponse(text)
         return render(request, "ADMIN/View service.html", {'data': serev_obj})
 
 def adm_service_updation(request):
@@ -387,6 +401,8 @@ def adm_delete_services(request,id):
 
     service_obj.delete()
     service_obj = Services.objects.all()
+    text = "<script>alert('Service Deleted');window.location='/myapp/adm_view_services/';</script>"
+    return HttpResponse(text)
     return render(request, "ADMIN/View service.html", {'data': service_obj})
 
 
@@ -397,6 +413,8 @@ def adm_delete_tips(request,id):
     tips_obj=Tips.objects.get(id=id)
     tips_obj.delete()
     tips_obj = Tips.objects.all()
+    text = "<script>alert('Tips Deleted');window.location='/myapp/adm_view_tips/';</script>"
+    return HttpResponse(text)
     return render(request, "ADMIN/View tips.html", {'data': tips_obj})
 def adm_edit_tip(request,id):
     tip_obj=Tips.objects.get(id=id)
@@ -417,6 +435,8 @@ def adm_update_tip(request):
         tip_obj.save()
 
         tip_obj =Tips.objects.all()
+        text = "<script>alert('Tips Updated');window.location='/myapp/adm_view_tips/';</script>"
+        return HttpResponse(text)
         return render(request, "ADMIN/View tips.html", {'data': tip_obj})
 
 
@@ -434,6 +454,7 @@ def adm_add_about(request):
 
         date=datetime.datetime.now().date()
         res=About(about=about_obj,photo=image,date=date)
+
         res.save()
 
     return render(request,"ADMIN/ABOUT DAYA.html")
@@ -446,6 +467,8 @@ def adm_delete_about(request,id):
 
     ab_obj.delete()
     ab_obj = About.objects.all()
+    # text = "<script>alert('About deleted);window.location='/myapp/adm_view_about/';</script>"
+    # return HttpResponse(text)
     return render(request, "ADMIN/VIEW ABOUT.html", {'data': ab_obj})
 
 
@@ -458,32 +481,41 @@ def adm_edit_about(request,id):
 def adm_update_about(request):
     if request.method == 'POST':
         about = request.POST['about']
-
-
         hid=request.session['uid']
         print(hid)
         ab_obj = About.objects.get(pk=hid)
         print(ab_obj)
-        ab_obj.about=about
-
-
-
         if 'fileField' in request.FILES:
             emp_image = request.FILES['fileField']
-
             #   SAVE IMAGE
             fs = FileSystemStorage()
             filename = fs.save(emp_image.name, emp_image)
             ab_obj.photo = fs.url(filename)
+            ab_obj.about = about
+            ab_obj.save()
+        else:
+            ab_obj.about = about
+            ab_obj.save()
 
 
-        ab_obj.save()
-        ab_obj = About.objects.all()
-        return render(request, "ADMIN/VIEW ABOUT.html", {'data': ab_obj})
+
+        # ab_obj = About.objects.all()
+        # text = "<script>alert('About deleted);window.location='/myapp/adm_view_about/';</script>"
+        #  return HttpResponse(text)
+        return redirect("/myapp/adm_view_about/")
 
 def adm_temp(request):
     return render(request,"adm_index.html")
 # Create your views here.
+
+
+def doc_temp(request):
+    return render(request,"doc_index.html")
+def doc_view_schedule(request):
+
+    schedule_obj = Schedule.objects.all()
+    return render(request,"DOCTOR/View schedule.html",{'data':schedule_obj})
+
 def homepage_doctor(request):
     return render(request,"DOCTOR/homepagepharmacist.html")
 def doc_add_prescription(request):
@@ -503,8 +535,6 @@ def doc_view_patients(request):
 
 def doc_view_prescription(request):
     return render(request,"DOCTOR/VIew prescription.html")
-def doc_view_schedule(request):
-    return render(request,"DOCTOR/View schedule.html")
 
 
 
@@ -513,7 +543,7 @@ def doc_view_schedule(request):
 
 
 
-#ANDROID.......
+                          #ANDROID.......
 
 
 
@@ -521,7 +551,7 @@ def view_service_patient(request):
     res2 = []
     ma = Services.objects.all()
     for ii in ma:
-        ss = {'id': ii.pk, 'services': ii.services}
+        ss = {'id': ii.pk, 'service': ii.services}
         res2.append(ss)
 
     data = {"status": "ok", "res2": res2}
@@ -534,8 +564,18 @@ def view_tips_patient(request):
         ss = {'id': ii.pk, 'tips': ii.tips}
         res2.append(ss)
 
-    data = {"status": "ok", "res2": res2}
+    data = {"status": "ok", "data": res2}
     return JsonResponse(data)
+
+def view_tips_more(request):
+
+    if request.method == 'POST':
+        tipid = request.POST['tipid']
+        ma = Tips.objects.get(id=tipid)
+
+        data = {"status": "ok", "tips": ma.tips}
+        return JsonResponse(data)
+
 
 def view_about_patient(request):
     res2 = []
@@ -544,7 +584,7 @@ def view_about_patient(request):
         ss = {'id': ii.pk, 'about': ii.about,'photo':ii.photo}
         res2.append(ss)
 
-    data = {"status": "ok", "res2": res2}
+    data = {"status": "ok", "data": res2}
     return JsonResponse(data)
 
 
@@ -562,49 +602,141 @@ def view_contact_info(request):
     ma = Contact_details.objects.all()
     ii=ma[0]
     data = {"status": "ok",  'phone_number': ii.phone_number,'latitude':ii.latitude,'longitude':ii.longitude,'loc_hint':ii.loc_hint,'email':ii.email}
+    print(data)
     return JsonResponse(data)
 
-def patients_registration(request):
-    if request.method == 'POST':
-        pa_name = request.POST['txt_name']
+# def patients_registration(request):
+#     if request.method == 'POST':
+#         pa_name = request.POST['name']
+#
+#         # pa_age = request.POST['age']
+#
+#         pa_gender = request.POST['gender']
+#         pa_place = request.POST['place']
+#         pa_housename = request.POST['house_name']
+#         pa_district = request.POST['district']
+#         # pa_pincode = request.POST['pincode']
+#         pa_phno = request.POST['phone']
+#
+#         pa_state = request.POST['state']
+#
+#         pa_email = request.POST['email']
+#
+#
+#         password=request.POST['password']
+#
+#         log_obj = Login()
+#         log_obj.username = pa_email
+#         log_obj.password = password
+#         log_obj.type = 'user'
+#         log_obj.save()
+#
+#
+#         pa_obj = Patient()
+#         pa_obj.patient_name= pa_name
+#
+#         pa_obj.gender= pa_gender
+#         pa_obj.housename= pa_housename
+#         pa_obj.district= pa_district
+#         pa_obj.state= pa_state
+#         pa_obj.emial_Id= pa_email
+#         pa_obj.phone_number= pa_phno
+#
+#         pa_obj.LOGIN_id = log_obj.id
+#         pa_obj.save()
+#
+#         data = {"status": "ok"}
+#         return JsonResponse(data)
+def user_login(request):
+    print("ooooo")
+    username=request.POST['username']
+    password=request.POST['password']
 
-        pa_age = request.POST['txt_age']
+    login_obj = Login.objects.filter(uname=username, password=password, logintype="user")
+    if login_obj.exists():
+        lg=login_obj[0]
+        return JsonResponse({'status': 'ok','lid':lg.id})
+    else:
+        return JsonResponse({'status': 'Invalid username or password'})
+def pa_registration(request):
+    print("hhhh")
+    name=request.POST['name']
+    housename=request.POST['hname']
+    place=request.POST['place']
+    pincode=request.POST['pincode']
+    age=request.POST['age']
+    phone=request.POST['phone']
+    email=request.POST['email']
+    password=request.POST['password']
 
-        pa_gender = request.POST['radio_gender']
-        pa_place = request.POST['txt_place']
-        pa_housename = request.POST['txt_hname']
-        pa_district = request.POST['txt_district']
-        pa_pincode = request.POST['txt_pincode']
-        pa_phno = request.POST['txt_phno']
-
-        pa_state = request.POST['txt_state']
-
-        pa_email = request.POST['txt_email']
-
-
-        password=request.POST['txt_password']
-
-
-
-
-        pa_obj = Patient()
-        pa_obj.emp_name= pa_name
-
-        pa_obj.gender= pa_gender
-        pa_obj.place= pa_place
-        pa_obj.housename= pa_housename
-        pa_obj.district= pa_district
-        pa_obj.pincode= pa_pincode
-        pa_obj.state= pa_state
-        pa_obj.emial_Id= pa_email
-        pa_obj.phone_number= pa_phno
-        pa_obj.password= password
+    gender=request.POST['gender']
+    district=request.POST['district']
+    state=request.POST['state']
+    print("yyy")
 
 
+    # import time
+    # import base64
+    #
+    # timestr = time.strftime("%Y%m%d-%H%M%S")
+    # a = base64.b64decode(image)
+    # fh = open("C:\\Users\\DELL\\PycharmProjects\\myproject\\media\\" + timestr + ".jpg", "wb")
+    # path = "/media/" + timestr + ".jpg"
+    # fh.write(a)
+    # fh.close()
 
-        pa_obj.save()
+    login_obj=Login()
+    login_obj.uname=email
+    login_obj.password=password
+    login_obj.logintype='user'
+    login_obj.save()
+    print("pppp")
 
-        data = {"status": "ok"}
-        return JsonResponse(data)
 
+    user_obj=Patient()
+    user_obj.patient_name=name
+    user_obj.housename=housename
+    user_obj.place=place
+    user_obj.pincode=pincode
+    user_obj.age=age
+    user_obj.phone_number=phone
+    user_obj.emial_Id=email
 
+    user_obj.gender=gender
+    user_obj.district=district
+    user_obj.state=state
+    user_obj.LOGIN_id=login_obj.id
+
+    user_obj.save()
+    return JsonResponse({'status':'ok'})
+def view_doctors(request):
+    doc_obj=Employee.objects.filter(emp_type='Doctor')
+    res2=[]
+    for ii in doc_obj:
+        ss = {'id': ii.pk, 'doc_name': ii.emp_name, 'photo': ii.photo, }
+        res2.append(ss)
+    data = {"status": "ok", "data": res2}
+    return JsonResponse(data)
+def view_our_doctors(request):
+    doc_obj=Employee.objects.filter(emp_type='Doctor')
+    res2=[]
+    for ii in doc_obj:
+        ss = {'id': ii.pk, 'doc_name': ii.emp_name, 'photo': ii.photo,'qua':ii.qualification }
+        res2.append(ss)
+    data = {"status": "ok", "data": res2}
+    return JsonResponse(data)
+def view_schedule(request):
+    did=request.POST['did']
+    day=request.POST['day']
+    doc_obj = Employee.objects.get(id=did)
+    print("hhh")
+    res2 = []
+    ma = Schedule.objects.filter(EMPPLOYEE=doc_obj,day=day)
+    print("qqq")
+    for ii in ma:
+        print("wwww")
+        ss = {'id': ii.pk, 'day': ii.day,'from_time':ii.from_time,'to_time':ii.to_time}
+        res2.append(ss)
+
+    data = {"status": "ok", "data": res2}
+    return JsonResponse(data)

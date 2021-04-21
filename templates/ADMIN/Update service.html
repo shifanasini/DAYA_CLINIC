@@ -5,16 +5,21 @@
 <form action="/myapp/adm_update_service/" method="POST">
 <input type="hidden" NAME="id" value="{{ data.hid }}" >
     {% csrf_token %}
-<table border="" align="center">
+<table border="" align="center" class="table table-bordered" style="width: 500px">
   <tr>
     <td >Enter services</td>
-    <td ><textarea name="service" cols="45" rows="5">{{ data.services }}</textarea></td>
+    <td ><textarea name="service" cols="45" rows="5" class="form-control">{{ data.services }} </textarea></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="center"><input name="Add" Value="Add" type="SUBMIT" /></td>
+    <td align="center"><input name="Add" Value="Update" type="SUBMIT" class="btn btn-success" /></td>
   </tr>
 </table>
 </form>
-
+<style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}
+</style>
 {% endblock %}

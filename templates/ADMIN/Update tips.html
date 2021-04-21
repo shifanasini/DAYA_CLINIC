@@ -4,14 +4,14 @@
 
 <form action="/myapp/adm_update_tip/" method="post">
 {% csrf_token %}
-<table class="table table-bordered" width="400px" align="center">
+<table class="table table-bordered" style="width: 400px;"align="center">
   <tr>
     <td  align="center">Enter tips</td>
     <td ><textarea name="tip" cols="45" rows="5">{{ data.tips }}</textarea></td>
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="center"><input name="Add" Value="Add" type="submit" /></td>
+    <td align="center"><input name="Add" Value="Update" type="submit" class="btn btn-success" /></td>
   </tr>
 </table>
 </form>

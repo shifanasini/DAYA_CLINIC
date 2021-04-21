@@ -10,13 +10,14 @@
   </tr>
   <tr>
     <td>Date Of Birth</td>
-    <td><input name="txt_dob" id="txt_dob" type="date" class="form-control" /></td>
+    <td><input name="txt_dob" id="txt_dob" type="date" class="form-control" required /></td>
   </tr>
   <tr>
     <td>Type</td>
-    <td><select name="selecttype"  class="form-control" required>
-        <option>Doctor</option>
-        <option>Pharmacist</option>
+    <td><select name="selecttype"  class="form-control"  id="select" required>
+        <option>--Select--</option>
+        <option value="Doctor">Doctor</option>
+        <option value="Pharmacist">Pharmacist</option>
     </select></td>
   </tr>
   <tr>
@@ -57,7 +58,7 @@
   </tr>
   <tr>
     <td>Pincode</td>
-    <td><input name="txt_pincode" type="number" class="form-control" required /></td>
+    <td><input name="txt_pincode" type="number" class="form-control" required [6789][0-9]{6}/></td>
 
   </tr>
 
@@ -78,6 +79,10 @@
     <td>Photo</td>
     <td><input name="fileField" type="file"   class="form-control" required/></td>
   </tr>
+     <tr id="trr">
+    <td>Booking Fee</td>
+    <td><input name="fee" type="text"   class="form-control" required/></td>
+ </tr>
     <tr>
         <td colspan="2"align="center">
             <input type="submit" value="ADD" class="btn btn-success"/>
@@ -92,7 +97,27 @@
     color: #000000;
 }
 </style>
+    <script src="/static/jquery.min.js"></script>
        <script>
+
+       var i
+ $(document).ready(function () {
+
+
+
+        $(document).on('change', '#select', function () {
+
+            var nid = $(this).val();
+            if(nid=="Doctor"){
+              $("#trr").show();
+            }
+            else {
+                 $("#trr").hide();
+            }
+        });
+});
+       </script>
+    <script>
        var today = new Date();
 var dd = today.getDate();
 var mm = today.getMonth()+1; //January is 0!
@@ -108,7 +133,7 @@ today = yyyy-18+'-'+mm+'-'+dd;
 document.getElementById("txt_dob").setAttribute("max", today);
 
   function validate(){
-    var regex = /^[a-zA-Z]+$/;
+    var regex = /^[a-zA-Z ]+$/;
 
     var txt_name=document.getElementById('txt_name');
     if(regex.test(txt_name.value) == false){
@@ -120,5 +145,7 @@ document.getElementById("txt_dob").setAttribute("max", today);
 
     return true;
   }
-</script>
+
+        </script>
+
 {% endblock %}

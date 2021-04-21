@@ -1,7 +1,7 @@
 {% extends  'adm_index.html' %}
 {% block body %}<br><br>
 <h1 align="center">EMPLOYEE UPDATION</h1><br><br>
-<form action="/myapp/adm_employee_updation/" method="post" enctype="multipart/form-data">
+<form action="/myapp/adm_employee_updation/" method="post"   onsubmit="return validate()" enctype="multipart/form-data">
 
 {% csrf_token %}
 <input type="hidden" NAME="id" value="{{ data.id }}" >
@@ -18,9 +18,11 @@ align="center" >
   </tr>
   <tr>
       <td>Type</td>
-        <td><select name="selecttype" class="form-control" required  {{ data.emp_type }}>
-        <option>Doctor</option>
-        <option>Pharmacist</option>
+        <td><select name="selecttype" id="select" class="form-control" required  {{ data.emp_type }}>
+                    <option>Select</option>
+
+        <option value="doctor">Doctor</option>
+        <option value="pharmacist">Pharmacist</option>
     </select></td>
   </tr>
   <tr>
@@ -88,11 +90,16 @@ align="center" >
     <td>Photo</td>
     <td><img src="{{ data.photo }}" height="50px"/> <input name="fileField" type="file"/></td>
   </tr>
+{#<tr id="trr">#}
+{#    <td >Booking Fee</td>#}
+{#    <td><input name="fee" type="text"   class="form-control" value="{{ data.fee }}"/></td>#}
+{# </tr>#}
     <tr><td></td>
         <td>
             <input type="submit" value="UPDATE" class="btn btn-success" align="center"/>
         </td>
     </tr>
+
 </table>
 
 </form>
@@ -102,5 +109,54 @@ align="center" >
         color: #000;
     }
     </style>
+{#   <script src="/static/jquery.min.js"></script>#}
+{#       <script>#}
+{##}
+{#       var i#}
+{# $(document).ready(function () {#}
+{##}
+{##}
+{##}
+{#        $(document).on('change', '#select', function () {#}
+{##}
+{#            var nid = $(this).val();#}
+{#            if(nid=="doctor"){#}
+{#              $("#trr").show();#}
+{#            }#}
+{#            else {#}
+{#                 $("#trr").hide();#}
+{#            }#}
+{#        });#}
+{#});#}
+{#       </script>#}
+    <script>
+       var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear();
+ if(dd<10){
+        dd='0'+dd
+    }
+    if(mm<10){
+        mm='0'+mm
+    }
 
+today = yyyy-18+'-'+mm+'-'+dd;
+document.getElementById("txt_dob").setAttribute("max", today);
+
+  function validate(){
+    var regex = /^[a-zA-Z ]+$/;
+
+    var txt_name=document.getElementById('txt_name');
+    if(regex.test(txt_name.value) == false){
+   alert("Name must be in alphabets only");
+   txt_name.focus();
+   return false;
+    }
+
+
+    return true;
+  }
+
+        </script>
 {% endblock %}
