@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 # from Mod import *
 # Create your views here.
 from daya_clinic.models import Services, Tips, Employee, Login, Schedule, Feedback, About, Attandance, Contact_details, \
-    Patient, book_fee
+    Patient, book_fee, Slot, Booking
 
 
 def homepage(request):
@@ -517,7 +517,8 @@ def doc_view_schedule(request):
     return render(request,"DOCTOR/View schedule.html",{'data':schedule_obj})
 
 def homepage_doctor(request):
-    return render(request,"DOCTOR/homepagepharmacist.html")
+    return render(request,"DOCTOR/homepage_doc.html")
+
 def doc_add_prescription(request):
     return render(request,"DOCTOR/ADD PRESCRIPTION.html")
 def doc_view_leave_satatus(request):
@@ -732,11 +733,103 @@ def view_schedule(request):
     print("hhh")
     res2 = []
     ma = Schedule.objects.filter(EMPPLOYEE=doc_obj,day=day)
+
     print("qqq")
     for ii in ma:
         print("wwww")
+
         ss = {'id': ii.pk, 'day': ii.day,'from_time':ii.from_time,'to_time':ii.to_time}
         res2.append(ss)
 
     data = {"status": "ok", "data": res2}
     return JsonResponse(data)
+
+def view_timeslots(request):
+    start_time=request.POST['stime']
+    end_time=request.POST['etime']
+    print(start_time)
+    print(end_time)
+    date=request.POST['date']
+    sch_id=request.POST['sch_id']
+
+    # chk
+    import datetime as dt
+
+    start_dt = dt.datetime.strptime(str(start_time), '%H:%M:%S')
+    end_dt = dt.datetime.strptime(str(end_time), '%H:%M:%S')
+    diff = (end_dt - start_dt)
+    aa = diff.seconds / 60
+    print("time=", diff)
+    print("time2=", aa)
+    # ovr
+    dd = aa / 15
+    print("dd=", dd)
+    msk = int(dd)
+
+    lst22 = []
+    lst22.append(start_time)
+    for jj in range(0, msk-1):
+        print(jj)
+
+        t1 = dt.datetime.strptime(str(start_time), '%H:%M:%S')
+        t2 = dt.datetime.strptime('00:15:00', '%H:%M:%S')
+        time_zero = dt.datetime.strptime('00:00:00', '%H:%M:%S')
+        print((t1 - time_zero + t2).time())
+        qq = (t1 - time_zero + t2).time()
+        ms22 = str(qq)
+        start_time = ms22
+        lst22.append(start_time)
+
+        # sch_obj = Schedule.objects.filter(id=sch_id)
+        # if sch_obj.exists():
+        #     sch_obj = Schedule.objects.get(id=sch_id)
+        #     slot_obj=Slot.objects.filter(SCHEDULE_id=sch_obj.id,slot_time=start_time)
+        #     if slot_obj.exists():
+        #         print("hi")
+        #     else:
+        #         res =Slot(slot_time=start_time, slot_status='pending', SCHEDULE_id=sch_id )
+        #         res.save()
+
+    avl_slots=[]
+    for slot in lst22:
+        print("sss=",slot)
+        print("ddd=",date)
+
+        book_obj=Booking.objects.filter(SLOT__slot_time=slot,date=date)
+        if book_obj.exists():
+            print("entr")
+            pass
+        else:
+            s={'slot':slot}
+
+
+            avl_slots.append(s)
+
+
+    print("final")
+    print(lst22)
+    # ovr
+    data = {"status": "ok", "data": avl_slots}
+    return JsonResponse(data)
+
+def booking(request):
+
+    emp_id = request.POST['doc_id']
+    dt=request.POST['dt']
+    emp_obj = Employee.objects.get(id=emp_id)
+    pa_id = request.POST['pa_id']
+    print("hi5")
+    pa_obj=Patient.objects.get(LOGIN_id=pa_id)
+
+
+    slot_id = request.POST['slot_id']
+    print("mm=",slot_id)
+    slot_obj =Slot.objects.get(slot_time=slot_id)
+    print("hhhhh")
+    print(slot_obj)
+    res=Booking(PATIENT=pa_obj,EMPLOYEE=emp_obj,SLOT=slot_obj,date=dt)
+    res.save()
+    data = {"status": "ok"}
+    return JsonResponse(data)
+
+

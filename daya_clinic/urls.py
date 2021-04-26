@@ -61,6 +61,7 @@ urlpatterns = [
 
     #doctor
     path('doc_index/', views.doc_temp),
+    path('homepage_doctor/', views.homepage_doctor),
     path('doc_view_schedule/', views.doc_view_schedule),
 
 
@@ -76,7 +77,9 @@ urlpatterns = [
     path("pa_registration/", views.pa_registration),
     path("view_our_doctors/", views.view_our_doctors),
     path("view_schedule/", views.view_schedule),
+    path("view_timeslots/", views.view_timeslots),
     path("user_login/", views.user_login),
+    path("booking/", views.booking),
 
 
 
