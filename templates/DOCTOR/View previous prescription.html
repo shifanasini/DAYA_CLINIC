@@ -1,15 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Untitled Document</title>
-</head>
+{% extends  'doc_index.html' %}
+{% block body %}
 
-<body>
-<h1 align="center"> SALES REPORT</h1>
-<form action="" method="get">
-<table align="center"
->
+<br><br><br>
+<h1 align="center">VIEW PRESCRIPTION </h1>
+<form action="/myapp/doc_view_medicine/" method="get">
+<table class="table table-bordered" style="width: 400px" align="center">
   <tr>
     <td>From Date</td>
     <td><select name=""></select></td>
@@ -17,30 +12,46 @@
     <td><select name=""></select></td>
   </tr>
 </table>
-<table align="center">
+<table align="center" class="table table-bordered" style="width: 400px">
   <tr>
-    <th >Sl.No</th>
-    <th>Patient Name</th>
-    <th >Date</th>
-    <th>Quantity</th>
-   
-    <th>Total Price</th>
-    <th >Medicins</th>
-    
-  </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>Patient name</td>
+    <td>{{ pat_name }}</td>
+</tr>
+<tr>
+    <td>Date</td>
+    <td>{{ date }}</td>
+</tr>
+
+   <tr>
+       <td>VIEW MEDICINE</td>
+
+
     
 
-    <td align="center"><a href="#">View Medicines</a></td>
+    <td align="center"><a href="/myapp/doc_view_medicine/">View Medicines</a></td>
   </tr>
+</table>
+<table align="center" class="table table-bordered" style="width: 1000px">
+    <th>Sl.No</th>
+    <th>Prescription</th>
+    <th>Medicine Name</th>
+    <th>Quantity</th>
+    <th>Unit</th>
+
+
+
+    {% for i in data %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+      <td>{{ i.prescription }}</td>
+    <td>{{ i.MEDICINE.name }}</td>
+    <td>{{ i.qty }}</td>
+    <td>{{ i.unit }}</td>
+
+  </tr>
+    {% endfor %}
+  <tr>
 </table>
 
 </form>
-</body>
-</html>
+{% endblock %}

@@ -145,7 +145,7 @@ class Booking(models.Model):
     PATIENT = models.ForeignKey(Patient, on_delete=models.CASCADE)
     EMPLOYEE = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
-    SLOT= models.ForeignKey(Slot, on_delete=models.CASCADE)
+    slot= models.CharField(max_length=200)
     date = models.DateField(max_length=300)
 
     class Meta:
@@ -161,9 +161,9 @@ class Medicine(models.Model):
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=50)
     usage = models.CharField(max_length=50)
-    dose = models.CharField(max_length=50)
+
     campany = models.CharField(max_length=50)
-    photo = models.CharField(max_length=200)
+
 
     class Meta:
         db_table = "medicine"
@@ -172,7 +172,8 @@ class Prescription(models.Model):
     BOOKING = models.ForeignKey(Booking, on_delete=models.CASCADE)
     MEDICINE= models.ForeignKey(Medicine, on_delete=models.CASCADE)
     prescription = models.CharField(max_length=50)
-    does = models.CharField(max_length=50)
+    qty = models.CharField(max_length=50,default="0")
+    unit = models.CharField(max_length=50)
 
     class Meta:
         db_table = "prescription"
@@ -224,5 +225,18 @@ class Current_slot(models.Model):
 
     class Meta:
         db_table = "current_slot"
+
+
+class Chat(models.Model):
+    PATIENT=models.ForeignKey(Patient,on_delete=models.CASCADE)
+    DOCTOR=models.ForeignKey(Employee,on_delete=models.CASCADE)
+
+    date = models.DateField(max_length=50)
+    message = models.CharField(max_length=200)
+    type = models.CharField(max_length=50)
+
+
+    class Meta:
+        db_table = "chat"
 
 

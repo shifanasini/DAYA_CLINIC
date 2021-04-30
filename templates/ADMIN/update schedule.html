@@ -9,6 +9,7 @@
 
     <td>Doctor Name</td>
     <td><select name="select" class="form-control" required>
+    <option value="{{ data.EMPPLOYEE.id }}">{{ data.EMPPLOYEE.emp_name}}</option>
         {% for i in data1 %}
             <option value="{{ i.id }}">{{ i.emp_name }}</option>
         {% endfor %}

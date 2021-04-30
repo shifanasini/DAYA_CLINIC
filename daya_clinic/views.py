@@ -7,11 +7,39 @@ from django.shortcuts import render, redirect
 # from Mod import *
 # Create your views here.
 from daya_clinic.models import Services, Tips, Employee, Login, Schedule, Feedback, About, Attandance, Contact_details, \
-    Patient, book_fee, Slot, Booking
+    Patient, book_fee, Slot, Booking, Chat, Medicine, Prescription, Reminder
 
 
 def homepage(request):
     return render(request,"ADMIN/homepage.html")
+def login(request):
+
+    if request.method=="POST":
+        username=request.POST['username']
+        password=request.POST['password']
+
+        login_obj=Login.objects.filter(uname=username,password=password)
+        if login_obj.exists():
+            log=login_obj[0]
+            if log.logintype=="admin":
+                return homepage(request)
+            elif log.logintype=="Doctor":
+                request.session['lid']=log.id
+
+                doc_obj=Employee.objects.get(LOGIN_id=Login.objects.get(id=log.id))
+                request.session['doc_id']=doc_obj.id
+                return homepage_doctor(request)
+            else:
+                return  HttpResponse("no")
+        else:
+            return HttpResponse("Invalid username or password")
+    else:
+        return render(request,"login.html")
+
+def ahome(request):
+    return render(request,'admin/adminhome.html')
+
+
 def adm_add_schedule(request):
     if request.method == 'POST':
         did=request.POST['select']
@@ -43,6 +71,7 @@ def adm_update_schedule(request):
         id=request.session['sch_id']
         print("yyy")
         did = request.POST['select']
+        print(did)
         day = request.POST['select2']
         from_time = request.POST['txt_frm']
        # fee = request.POST['fee']
@@ -112,6 +141,7 @@ def adm_employee_registration(request):
         login_obj.password=password
         login_obj.logintype=emp_type
         login_obj.save()
+        print(login_obj)
 
 
         employee_obj = Employee()
@@ -147,6 +177,7 @@ def adm_employee_registration(request):
 def adm_view_employee(request):
     if request.method=="POST":
         emp_search=request.POST['text']
+        # book_obj=book_fee.objects.get(EMPLOYEE__emp_name=emp_search)
         emp_obj=Employee.objects.filter(emp_name__contains=emp_search)
         return render(request, "ADMIN/VIEW EMPLOYEES.html", {'data': emp_obj})
     emp_obj =Employee.objects.all()
@@ -162,9 +193,16 @@ def adm_delete_employee(request,id):
 
 def adm_edit_employee(request,id):
     emp_obj=Employee.objects.get(id=id)
-
     print(id)
-    return render(request, "ADMIN/EMPLOYEE UPDATION.html", {'data': emp_obj})
+    fee_obj=book_fee.objects.filter(EMPLOYEE=emp_obj)
+    if fee_obj.exists():
+        fee_obj = book_fee.objects.get(EMPLOYEE=emp_obj)
+        # fee_obj=fee_obj[0]
+        fee=fee_obj.fee
+        fee_obj.save()
+    else:
+        fee="0"
+    return render(request, "ADMIN/EMPLOYEE UPDATION.html", {'data': emp_obj,'fee':fee})
 def adm_update_employee(request):
     if request.method == 'POST':
         emp_name = request.POST['txt_name']
@@ -456,7 +494,8 @@ def adm_add_about(request):
         res=About(about=about_obj,photo=image,date=date)
 
         res.save()
-
+        text = "<script>alert('About Added');window.location='/myapp/adm_add_about/';</script>"
+        return HttpResponse(text)
     return render(request,"ADMIN/ABOUT DAYA.html")
 def adm_view_about(request):
     about_obj=About.objects.all()
@@ -501,7 +540,8 @@ def adm_update_about(request):
 
         # ab_obj = About.objects.all()
         # text = "<script>alert('About deleted);window.location='/myapp/adm_view_about/';</script>"
-        #  return HttpResponse(text)
+        # return HttpResponse(text)
+        # return render(request, "ADMIN/VIEW ABOUT.html", {'data': ab_obj})
         return redirect("/myapp/adm_view_about/")
 
 def adm_temp(request):
@@ -512,31 +552,116 @@ def adm_temp(request):
 def doc_temp(request):
     return render(request,"doc_index.html")
 def doc_view_schedule(request):
-
-    schedule_obj = Schedule.objects.all()
+    docid=request.session['doc_id']
+    schedule_obj = Schedule.objects.filter(EMPPLOYEE_id=docid)
     return render(request,"DOCTOR/View schedule.html",{'data':schedule_obj})
+def doc_view_booking(request):
+    docid=request.session['doc_id']
+    bok_obj = Booking.objects.filter(EMPLOYEE=docid,date=datetime.datetime.now().date())
+    if request.method=="POST":
+        pat=request.POST['pat']
+        bok_obj = Booking.objects.filter(EMPLOYEE_id=docid,PATIENT__patient_name__contains=pat)
+    return render(request,"DOCTOR/View booking doctor.html",{'data':bok_obj})
 
 def homepage_doctor(request):
     return render(request,"DOCTOR/homepage_doc.html")
 
-def doc_add_prescription(request):
-    return render(request,"DOCTOR/ADD PRESCRIPTION.html")
+def doc_add_prescription(request,bookid):
+    bok_obj=Booking.objects.get(id=bookid)
+    pat_name=bok_obj.PATIENT.patient_name
+    date=bok_obj.date
+    med_obj=Medicine.objects.all()
+    request.session['bookid']=bookid
+    pres_obj=Prescription.objects.filter(BOOKING=bok_obj)
+    return render(request,"DOCTOR/ADD PRESCRIPTION.html",{'data':med_obj,'pat_name':pat_name,'date':date,'data2':pres_obj})
+
+def doc_del_presc(request,id):
+    pr=Prescription.objects.get(id=id)
+    pr.delete()
+    book_id = request.session['bookid']
+    return doc_add_prescription(request,book_id)
+def doc_add_prescription_post(request):
+    btn=request.POST['button']
+    med_obj = Medicine.objects.all()
+    if btn=="Add":
+       pre= request.POST['pres']
+       quantity= request.POST['qty']
+       unit= request.POST['unit']
+       med= request.POST['select']
+       book_id=request.session['bookid']
+       res=Prescription(prescription=pre,qty=quantity,unit=unit,MEDICINE_id=med,BOOKING_id=book_id)
+       res.save()
+       bok_obj = Booking.objects.get(id=book_id)
+       pat_name = bok_obj.PATIENT.patient_name
+       date = bok_obj.date
+       pres_obj=Prescription.objects.filter(BOOKING=bok_obj)
+       return render(request, "DOCTOR/ADD PRESCRIPTION.html", {'data': med_obj, 'pat_name': pat_name, 'date': date,'data2':pres_obj})
+    else:
+        docid = request.session['doc_id']
+        bok_obj = Booking.objects.filter(EMPLOYEE=docid, date=datetime.datetime.now().date())
+        return render(request, "DOCTOR/View booking doctor.html", {'data': bok_obj})
+
+
 def doc_view_leave_satatus(request):
     return render(request,"DOCTOR/Leave Status doctor.html")
 def doc_add_leave(request):
     return render(request,"DOCTOR/LEAVE APPLICATION DOCTOR.html")
 def doc_next_slot(request):
     return render(request,"DOCTOR/Next slot.html")
-def doc_add_next_visit(request):
-    return render(request,"DOCTOR/NEXT VISIT ENTRY.html")
+def doc_add_next_visit(request,bookid):
+    bok_obj = Booking.objects.get(id=bookid)
+    pat_name = bok_obj.PATIENT.patient_name
+
+    return render(request,"DOCTOR/NEXT VISIT ENTRY.html",{'data':bok_obj,'pat_name':pat_name})
+
+def doc_add_next_visit_post(request):
+ if request.method == 'POST':
+    # date = request.POST['date']
+    # book_id = request.session['bookid']
+    # res = Reminder(date=date, BOOKING_id=book_id)
+    # res.save()
+    next_date = request.POST['date']
+    book_id = request.session['bookid']
+    next_obj = Reminder()
+    next_obj.next_date = next_date
+
+    next_obj.BOOKING_id = book_id
+    next_obj.save()
+    # text = "<script>alert('Next visit Added');window.location='/myapp/doc_add_next_visit/';</script>"
+    # return HttpResponse(text)
+ return render(request,"DOCTOR/NEXT VISIT ENTRY.html")
+
+ # return render(request,"DOCTOR/NEXT VISIT ENTRY.html")
+
 def doc_view_medicine(request):
-    return render(request,"DOCTOR/View medicine.html")
+    book_id=request.session['bookid']
+    pre_obj = Prescription.objects.filter(BOOKING_id=book_id)
+    return render(request,"DOCTOR/View previous prescription.html",{'data':pre_obj})
 def doc_view_patients(request):
-    return render(request,"DOCTOR/View patients doctor.html")
+    docid = request.session['doc_id']
+    ar=[]
+    res=[]
+    book_obj = Booking.objects.filter(EMPLOYEE_id=docid)
+    if request.method=="POST":
+        pat=request.POST['pat']
+        book_obj = Booking.objects.filter(EMPLOYEE_id=docid,PATIENT__patient_name__contains=pat)
+    print(len(book_obj))
+    for i in book_obj:
+        if i.PATIENT.id not in ar:
+            s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id}
+            res.append(s)
+            ar.append(i.PATIENT.id)
+    print(res)
+    return render(request,"DOCTOR/View patients doctor.html",{'data':res})
 
-def doc_view_prescription(request):
-    return render(request,"DOCTOR/VIew prescription.html")
+def doc_view_prescription(request,bookid):
+    bok_obj=Booking.objects.get(id=bookid)
+    pat_name=bok_obj.PATIENT.patient_name
+    date=bok_obj.date
 
+    request.session['bookid']=bookid
+    pres_obj=Prescription.objects.filter(BOOKING=bok_obj)
+    return render(request,"DOCTOR/View previous prescription.html",{'pat_name':pat_name,'date':date,'data2':pres_obj})
 
 
 
@@ -795,7 +920,7 @@ def view_timeslots(request):
         print("sss=",slot)
         print("ddd=",date)
 
-        book_obj=Booking.objects.filter(SLOT__slot_time=slot,date=date)
+        book_obj=Booking.objects.filter(slot=slot,date=date)
         if book_obj.exists():
             print("entr")
             pass
@@ -824,12 +949,95 @@ def booking(request):
 
     slot_id = request.POST['slot_id']
     print("mm=",slot_id)
-    slot_obj =Slot.objects.get(slot_time=slot_id)
-    print("hhhhh")
-    print(slot_obj)
-    res=Booking(PATIENT=pa_obj,EMPLOYEE=emp_obj,SLOT=slot_obj,date=dt)
+    # slot_obj =Slot.objects.get(slot_time=slot_id)
+    # print("hhhhh")
+    # print(slot_obj)
+    res=Booking(PATIENT=pa_obj,EMPLOYEE=emp_obj,slot=slot_id,date=dt)
     res.save()
     data = {"status": "ok"}
     return JsonResponse(data)
+#
+# ef chatload(request):
+#     return render(request,'featuremember/fur_chat.html')
+
+def drviewmsg(request,receiverid):
+
+    doclidlid=request.session["lid"]
+    print("!!!!!!!!!!",doclidlid,receiverid)
+    doc=featuremember.objects.get(LOGIN=doclidlid)
+    obj=chat.objects.filter(FID=doc,NID=normalmember.objects.get(id=receiverid))
+    user_data=normalmember.objects.get(id=receiverid)
+    print("********************",obj)
+
+    res = []
+    for i in obj:
+        s = {'id':i.pk, 'date':i.date,'msg':i.message,'type':i.type}
+        res.append(s)
+    print(res)
+    return JsonResponse({'status': 'ok', 'data': res,'name':user_data.name,'image':user_data.image})
+
+def chatview(request):
+    print("hai")
+    da = Patient.objects.all()
+    res = []
+    for i in da:
+        s = {'id': i.pk, 'name': i.name, 'email': i.email}
+        res.append(s)
+    print(res)
+    return JsonResponse({'status': 'ok', 'data': res})
+def in_message2(request,receiverid,msg):
+
+    dlid= request.session["lid"]
+    dobj=Patient.objects.get(LOGIN=dlid)
+    import datetime
+    datetime.date.today()  # Returns 2018-01-15
+    showtime=datetime.datetime.now()
+
+    obj=Chat()
+    obj.NID=normalmember.objects.get(pk=receiverid)
+    obj.FID=dobj
+    obj.message=msg
+    obj.type='fuser'
+    obj.date=showtime
+    obj.save()
+    return JsonResponse({'status':'ok'})
+
+
+
+
+def inmessage(request):
+    fid=request.POST['fid']
+    log_obj = Login.objects.get(id=fid)
+    pat_obj = Patient.objects.get(LOGIN=log_obj)
+    toid=request.POST['toid']
+    msg=request.POST['msg']
+    rtype=request.POST['type']
+    ch=Chat()
+    ch.date=datetime.datetime.now().date()
+    ch.PATIENT_id=pat_obj.id
+    ch.DOCTOR_id=toid
+    ch.message=msg
+    ch.type=rtype
+    ch.save()
+    return JsonResponse({'status':'ok'})
+
+def view_message2(request):
+    fid=request.POST['fid']
+    log_obj=Login.objects.get(id=fid)
+    pat_obj=Patient.objects.get(LOGIN=log_obj)
+    toid=request.POST['toid']
+    lmid=request.POST['lastmsgid']
+
+
+    cha = Chat.objects.filter(PATIENT_id=pat_obj.id, DOCTOR_id=toid, pk__gte=lmid)
+
+    if cha.exists():
+        a = []
+        for i in cha:
+            if i.pk > int(lmid):
+                a.append({'id': i.pk, 'msg': i.message, 'date': i.date, 'type': i.type})
+        return JsonResponse({'status': 'ok', 'data': a})
+    else:
+        return JsonResponse({'status': 'no'})
 
 

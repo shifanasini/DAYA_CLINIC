@@ -1,55 +1,75 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Untitled Document</title>
-</head>
-
-<body>
-<h1 align="center">Add sale</h1>
-<table align="center">
+{% extends  'doc_index.html' %}
+{% block body %}
+<form action="/myapp/doc_add_prescription_post/" method="post">
+<br>
+<br>
+<br>
+<h1 align="center">ADD MEDICINE</h1><br>
+<br>
+<br>
+<table class="table table-bordered" style="width: 400px;" align="center">
+<tr>
+    <td>Patient name</td>
+    <td>{{ pat_name }}</td>
+</tr>
+<tr>
+    <td>Date</td>
+    <td>{{ date }}</td>
+</tr>
   <tr>
     <td>Medicine Name</td>
-    <td><input name="" type="text" /></td>
+    <td><select name="select" class="form-control" required>
+        {% for i in data %}
+            <option value="{{ i.id }}">{{ i.name }}</option>
+        {% endfor %}
+</td>
   </tr>
   <tr>
     <td>Prescription</td>
-    <td><textarea name="" cols="" rows=""></textarea></td>
+    <td><textarea name="pres" cols="50" rows="5" class="form-control"></textarea></td>
   </tr>
   <tr>
     <td>Qyantity</td>
-    <td><input name="" type="text" /></td>
+    <td><input name="qty" type="text" class="form-control" /></td>
   </tr>
    <tr>
-    <td>Dose</td>
-    <td><input name="" type="text" /></td>
+    <td>Unit</td>
+    <td><input name="unit" type="text" class="form-control" /></td>
   </tr>
   <tr>
     <td></td>
-    <td><input name="" type="button" value="Add" /></td>
+    <td><input name="button" type="submit" value="Add" class="btn-success" /></td>
   </tr>
-</table><table align="center">
+</table><table class="table table-bordered" style="width:1000px" align="center">
   <tr>
     <th>Sl.no</th>
+      <th>Prescription</th>
     <th>Medicine Name</th>
-    <th><th>Medicine Name</th></th>
     <th>Quantity</th>
-    <td>Dose</td>
-    <th>Edit</th>
+    <th>Unit</th>
+    <th></th>
     
   </tr>
+    {% for i in data2 %}
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td><a href="#">Edit</a></td>
+    <td>{{ forloop.counter }}</td>
+      <td>{{ i.prescription }}</td>
+    <td>{{ i.MEDICINE.name }}</td>
+    <td>{{ i.qty }}</td>
+    <td>{{ i.unit }}</td>
+    <td><a href="/myapp/doc_del_presc/{{ i.id }}">Delete</a></td>
   </tr>
+    {% endfor %}
   <tr>
-    <td></td>
-    <td><input name="" type="button" value="Finish" /></td>
+
+    <td><input name="button" type="submit" value="Finish" class="btn-success" /></td>
   </tr>
 </table>
-
-</body>
-</html>
+</form>
+     <style>
+     .form-control{
+         background-color: #ffffff;
+         color:#000000;
+         }
+    </style>
+{% endblock %}

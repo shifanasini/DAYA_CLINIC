@@ -1,22 +1,34 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Untitled Document</title>
-</head>
 
-<body><h1 align="center">NEXT VISIT</h1>
-<form action="" method="get">
-<table width="231" height="97"  align="center">
+{% extends  'doc_index.html' %}
+{% block body %}
+    <br>
+    <br>
+    <br>
+<h1 align="center">NEXT VISIT</h1> <br>
+    <br>
+    <br>
+
+<form action="/myapp/doc_add_next_visit_post/" method="post">
+
+<table class="table table-bordered"  align="center" style="width: 600px">
+ <tr>
+    <td>Patient name</td>
+    <td>{{ pat_name }}</td>
+</tr>
   <tr>
-    <td width="117" align="center">Enter Date</td>
-    <td width="102"><select name=""></select></td>
+    <td>Enter Date</td>
+    <td><input name="date" id="date" type="date" class="form-control" required /></td>>
   </tr>
   <tr>
-    <td>&nbsp;</td>
-    <td align="center"><input name="Add" Value="Add"type="button" /></td>
+
+    <td align="center"><input name="button" Value="Add" type="submit" class="btn-success" /></td>
   </tr>
 </table>
 </form>
-</body>
-</html>
+      <style>
+     .form-control{
+         background-color: #ffffff;
+         color:#000000;
+         }
+    </style>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends  'adm_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">EMPLOYEE REGISTERATION</h1><br><br>
+<form action="/myapp/adm_employee_registration/"  method="POST" ">
+    {% csrf_token %}
+<table  class="table table-bordered" style="width: 400px;" align="center">
+  <tr>
+    <td>PATIENT NAME</td>
+    <td><select name="selecttype"  class="form-control"  id="select" required>
+        <option>--Select--</option>
+        <option></option>
+
+        <option></option>
+    </select></td>
+
+
+  <tr>
+    <td>DATE</td>
+    <td><input name="date" id="txt_dob" type="date" class="form-control" required /></td>
+
+  </tr>
+
+  <tr>
+    <td>MEDICINE</td>
+    <td><input name="medicine" type="text"  class="form-control" required/></td>
+  </tr>
+  <tr>
+    <td>PRESCRIPTION </td>
+    <td> <td>&nbsp;<textarea name="prescription" id="prescription" cols="45" rows="5" class="form-control" required ></textarea></td></td>
+
+  </tr>
+     <tr>
+    <td>QUANTITY</td>
+    <td><input name="qty" type="text" class="form-control" required/></td>
+  </tr>
+
+  <tr>
+    <td>UNIT</td>
+    <td><input name="unit" type="text" class="form-control" required pattern="[0-9]{6}"/></td>
+
+  </tr>
+
+
+    <tr>
+        <td colspan="2"align="center">
+            <input type="submit" value="ADD" class="btn btn-success"/>
+        </td>
+    </tr>
+</table>
+
+</form>
+    <form>
+    <table class="table table-bordered" style="width: 1300px" align="center">
+  <tr>
+    <th >Sl.No</th>
+    <th>PATIENT NAME</th>
+    <th>MEDICINE</th>
+    <th>QUANTITY</th>
+    <th>UNIT</th>
+    <th>PRESCRIPTION</th>
+
+
+    <th COLSPAN="2"></th>
+  </tr>
+    {% for i in data %}
+  <tr>
+
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.pa_name }}</td>
+    <td>{{  i.medicine}}</td>
+    <td>&nbsp;{{ i.qty }}</td>
+    <td>{{ i.unit }}</td>
+    <td>{{i.prescription }}</td>
+
+
+
+
+
+
+    <td align="center"><a href="\myapp\adm_edit_employee\{{ i.pk }}">UPDATE</a></td>
+    <td align="center"><a href="\myapp\adm_delete_employee\ {{ i.pk }}">DELETE</a></td>
+  </tr>
+    {% endfor %}
+      <tr>
+        <td colspan="2"align="center">
+            <input type="submit" value="FINISH" class="btn btn-success"/>
+        </td>
+    </tr>
+</table>
+</form>
+    </form>
+<style>
+.form-control{
+    background-color: #ffffff;
+    color: #000000;
+}
+</style>
+
+{% endblock %}

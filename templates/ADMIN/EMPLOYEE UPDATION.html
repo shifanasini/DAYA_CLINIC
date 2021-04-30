@@ -18,8 +18,8 @@ align="center" >
   </tr>
   <tr>
       <td>Type</td>
-        <td><select name="selecttype" id="select" class="form-control" required  {{ data.emp_type }}>
-                    <option>Select</option>
+        <td><select name="selecttype" id="select" class="form-control" required  >
+                    <option>{{ data.emp_type }}</option>
 
         <option value="doctor">Doctor</option>
         <option value="pharmacist">Pharmacist</option>
@@ -70,13 +70,13 @@ align="center" >
   </tr>
   <tr>
     <td>Pincode</td>
-    <td><input name="txt_pincode" type="number" value="{{ data.pincode }}" class="form-control" required  pattern="[6789][0-9]{6}"/></td>
+    <td><input name="txt_pincode" type="text" value="{{ data.pincode }}" class="form-control" required  pattern="[0-9]{6}"/></td>
 
   </tr>
 
   <tr>
     <td>Email Id</td>
-    <td><input name="txt_email" type="email"value="{{ data.emial_Id  }}" class="form-control" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" /></td>
+    <td><input name="txt_email" type="email" value="{{ data.emial_Id  }}" class="form-control" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}" /></td>
   </tr>
   <tr>
     <td>Phone Number</td>
@@ -90,10 +90,10 @@ align="center" >
     <td>Photo</td>
     <td><img src="{{ data.photo }}" height="50px"/> <input name="fileField" type="file"/></td>
   </tr>
-{#<tr id="trr">#}
-{#    <td >Booking Fee</td>#}
-{#    <td><input name="fee" type="text"   class="form-control" value="{{ data.fee }}"/></td>#}
-{# </tr>#}
+<tr id="trr">
+    <td >Booking Fee</td>
+    <td><input name="fee" type="text"   class="form-control" value="{{ fee }}"/></td>
+ </tr>
     <tr><td></td>
         <td>
             <input type="submit" value="UPDATE" class="btn btn-success" align="center"/>
@@ -109,26 +109,26 @@ align="center" >
         color: #000;
     }
     </style>
-{#   <script src="/static/jquery.min.js"></script>#}
-{#       <script>#}
-{##}
-{#       var i#}
-{# $(document).ready(function () {#}
-{##}
-{##}
-{##}
-{#        $(document).on('change', '#select', function () {#}
-{##}
-{#            var nid = $(this).val();#}
-{#            if(nid=="doctor"){#}
-{#              $("#trr").show();#}
-{#            }#}
-{#            else {#}
-{#                 $("#trr").hide();#}
-{#            }#}
-{#        });#}
-{#});#}
-{#       </script>#}
+   <script src="/static/jquery.min.js"></script>
+       <script>
+
+       var i
+ $(document).ready(function () {
+
+
+
+        $(document).on('change', '#select', function () {
+
+            var nid = $(this).val();
+            if(nid=="doctor"){
+              $("#trr").show();
+            }
+            else {
+                 $("#trr").hide();
+            }
+        });
+{);
+       </script>
     <script>
        var today = new Date();
 var dd = today.getDate();

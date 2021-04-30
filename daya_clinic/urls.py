@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path('adm_add_schedule/', views.adm_add_schedule),
+    path('login/', views.login),
     path('adm_add_services/', views.adm_add_services),
     path('adm_view_employee/', views.adm_view_employee),
 
@@ -45,14 +46,17 @@ urlpatterns = [
     path('adm_checkout_post/',views.adm_checkout_post),
     path('adm_view_booking_info/', views.adm_view_booking_info),
     path('homepage/', views. homepage),
-    path('homepage_doctor/', views. homepage_doctor),
-    path('doc_add_prescription/', views. doc_add_prescription),
+    path('homepage_doctor/', views.homepage_doctor),
+    path('doc_add_prescription/<str:bookid>', views.doc_add_prescription),
+    path('doc_add_prescription_post/', views.doc_add_prescription_post),
+    path('doc_del_presc/<str:id>', views.doc_del_presc),
+
     path('doc_view_leave_satatus/', views.  doc_view_leave_satatus),
     path('doc_add_leave/', views. doc_add_leave),
     path('doc_next_slot/', views. doc_next_slot),
     path('doc_add_next_visit/', views. doc_add_next_visit),
     path('doc_view_patients/', views. doc_view_patients),
-    path('doc_view_prescription/', views. doc_view_prescription),
+    # path('doc_view_prescription/', views. doc_view_prescription),
     path('doc_view_schedule/', views. doc_view_schedule),
 
 
@@ -63,6 +67,12 @@ urlpatterns = [
     path('doc_index/', views.doc_temp),
     path('homepage_doctor/', views.homepage_doctor),
     path('doc_view_schedule/', views.doc_view_schedule),
+    path('doc_view_patients/', views.doc_view_patients),
+    path('doc_view_booking/', views.doc_view_booking),
+    path('doc_add_next_visit/<str:bookid>', views.doc_add_next_visit),
+    path('doc_add_next_visit_post/', views.doc_add_next_visit_post),
+    path('doc_view_prescription/<str:bookid>', views.doc_view_prescription),
+    path('doc_view_medicine/', views.doc_view_medicine),
 
 
 
@@ -80,6 +90,8 @@ urlpatterns = [
     path("view_timeslots/", views.view_timeslots),
     path("user_login/", views.user_login),
     path("booking/", views.booking),
+    path("inmessage/", views.inmessage),
+    path("view_message2/", views.view_message2),
 
 
 
