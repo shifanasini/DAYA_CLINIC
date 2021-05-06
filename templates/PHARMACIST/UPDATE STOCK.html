@@ -10,6 +10,7 @@
   <tr>
 <td>Select Batch</td>
  <td><select name="select" class="form-control" required>
+ <option value="{{ data.BATCH.id }}">{{ data.BATCH.b_name}}</option>
         {% for i in data1 %}
             <option value="{{ i.id }}">{{ i.b_name }}</option>
         {% endfor %}
