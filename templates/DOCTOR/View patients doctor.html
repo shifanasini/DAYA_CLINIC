@@ -1,4 +1,4 @@
-{% extends  'doc_index.html' %}
+{% extends  'doctorindex.html' %}
 {% block body %}
 <h1 align="center"> View Patients</h1>
 <form id="form1" name="form1" method="post" action="/myapp/doc_view_patients/">
@@ -23,6 +23,7 @@
     <th >Address</th>
 
     <th ><p>Phone Number</p></th>
+    <th ><p>Date</p></th>
     <th >Email Id</th>
     <th align="center">Action</th>
 
@@ -35,10 +36,11 @@
     <td>&nbsp;{{ i.gender }}</td>
      <td>{{i.housename }}<br>{{ i.place }}<br>{{ i.district }}<br>{{ i.state }}<br>{{ i.pincode }}</td>
     <td>{{ i.phone_number }}</td>
+    <td>{{ i.date }}</td>
     <td>{{ i.email }}</td>
     <td >
-  <a href="#">Add Next Viisit</a><br>
-  <a href="#">Previous Prescription</a></td>
+
+  <a href="/myapp/doc_view_prescription/{{ i.id }}">Previous Prescription</a></td>
   </tr>
     {% endfor %}
 </table>

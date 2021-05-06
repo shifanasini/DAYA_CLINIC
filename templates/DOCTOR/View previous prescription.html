@@ -1,50 +1,45 @@
-{% extends  'doc_index.html' %}
+{% extends  'doctorindex.html' %}
 {% block body %}
 
 <br><br><br>
 <h1 align="center">VIEW PRESCRIPTION </h1>
-<form action="/myapp/doc_view_medicine/" method="get">
+    <br><br><br>
+<form action="/myapp/doc_view_prescription_post/" method="post">
 <table class="table table-bordered" style="width: 400px" align="center">
-  <tr>
-    <td>From Date</td>
-    <td><select name=""></select></td>
-    <td>To Date</td>
-    <td><select name=""></select></td>
-  </tr>
+    <tr>
+        <td>From Date</td>
+        <td><input type="date" name="dd1" required class="form-control"></td>
+        <td>To Date</td>
+        <td><input type="date" name="dd2" required class="form-control"></td>
+        <td><input type="submit" name="search" value="Go" class="btn-success"></td>
+
+    </tr>
 </table>
 <table align="center" class="table table-bordered" style="width: 400px">
   <tr>
     <td>Patient name</td>
     <td>{{ pat_name }}</td>
 </tr>
-<tr>
-    <td>Date</td>
-    <td>{{ date }}</td>
-</tr>
-
-   <tr>
-       <td>VIEW MEDICINE</td>
 
 
-    
 
-    <td align="center"><a href="/myapp/doc_view_medicine/">View Medicines</a></td>
-  </tr>
 </table>
 <table align="center" class="table table-bordered" style="width: 1000px">
     <th>Sl.No</th>
     <th>Prescription</th>
+    <th>Date</th>
     <th>Medicine Name</th>
     <th>Quantity</th>
     <th>Unit</th>
 
 
 
-    {% for i in data %}
+    {% for i in data2 %}
   <tr>
     <td>{{ forloop.counter }}</td>
-      <td>{{ i.prescription }}</td>
-    <td>{{ i.MEDICINE.name }}</td>
+      <td>{{ i.pre_name }}</td>
+      <td>{{ i.date }}</td>
+    <td>{{ i.mname }}</td>
     <td>{{ i.qty }}</td>
     <td>{{ i.unit }}</td>
 

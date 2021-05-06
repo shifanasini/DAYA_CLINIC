@@ -1,7 +1,17 @@
-{% extends  'adm_index.html' %}
+{% extends  'adminindex.html' %}
 {% block body %}<br><br>
 <h1 align="center">VIEW ATTENDANCE</h1><br><br>
 <form action="/myapp/adm_view_attendance/" method="post">
+<table class="table table-bordered" style="width: 400px" align="center">
+    <tr>
+        <td>From Date</td>
+        <td><input type="date" name="date1" required class="form-control"></td>
+        <td>To Date</td>
+        <td><input type="date" name="date2" required class="form-control"></td>
+        <td><input type="submit" name="search" value="Go" class="btn-success"></td>
+
+    </tr>
+</table>
 <table class="table table-bordered"style="width: 1300px" align="center">
   <tr>
     <th>Sl.No</th>

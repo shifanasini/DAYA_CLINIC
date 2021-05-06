@@ -1,0 +1,80 @@
+{% extends  'pharmacist_index.html' %}
+{% block body %}
+    <br>
+    <br><br>
+<h1 align="center">UPDATE STOCK</h1>
+
+<form action="/myapp/adm_update_stock/" method="post" onsubmit="return validate()">
+{% csrf_token %}
+  <table align="center" class="table table-bordered" style="width: 400px">
+  <tr>
+<td>Select Batch</td>
+ <td><select name="select" class="form-control" required>
+        {% for i in data1 %}
+            <option value="{{ i.id }}">{{ i.b_name }}</option>
+        {% endfor %}
+ </select></td>
+</tr>
+{#   <tr>#}
+{#   <td>Select Company</td>#}
+{# <td><select name="select2" class="form-control" required>#}
+{#        {% for i in data2 %}#}
+{#            <option value="{{ i.id }}">{{ i.campany }}</option>#}
+{#        {% endfor %}#}
+{# </select></td>#}
+{#</tr>#}
+
+
+    <td>Quanity</td>
+    <td><input type="number" name="qty" required value="{{ data.quantity }}"></td>
+  </tr>
+
+
+  <tr>
+  <td></td>
+  <td><input name="input2" type="submit" value="UPDATE STOCK" class="btn-success"/></td></tr>
+</table>
+</form>
+    <script>
+     function validate() {
+{#        var letters = /^[A-Za-z]+$/;#}
+{#        var cate = document.getElementById('name');#}
+{#        if (!cate.value.match(letters)) {#}
+{#            alert('Name should be alphabet only');#}
+{#            return false;#}
+{#        }#}
+{#         var letters = /^[A-Za-z]+$/;#}
+{#        var cate = document.getElementById('author');#}
+{#        if (!cate.value.match(letters)) {#}
+{#            alert('Author should be alphabet only');#}
+{#            return false;#}
+{#        }#}
+         var numbers = /^[0-9]+$/;
+        var cat=document.getElementById('amount');
+        if(!cat.value.match(numbers))
+        {
+        alert(' Price should be a amount');
+
+        return false;
+        }
+         var numbers = /^[0-9]+$/;
+        var cat=document.getElementById('uamount');
+        if(!cat.value.match(numbers))
+        {
+        alert(' Unit  should be a amount');
+
+        return false;
+        }
+        return true;
+
+{#         var letters = /^[A-Za-z]+$/;#}
+{#        var cate = document.getElementById('type');#}
+{#        if (!cate.value.match(letters)) {#}
+{#            alert('Type should be alphabet only');#}
+{#            return false;#}
+{#        }#}
+{#        return true;#}
+    }
+
+</script>
+{% endblock %}

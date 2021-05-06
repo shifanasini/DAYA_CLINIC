@@ -77,9 +77,11 @@ class Slot(models.Model):
 class Leave(models.Model):
     EMPLOYEE = models.ForeignKey(Employee, on_delete=models.CASCADE)
     date= models.DateField(max_length=50)
-    reason = models.TextField(max_length=100)
-    leave_status = models.TextField(max_length=100)
-    type= models.TextField(max_length=100)
+    to_date= models.DateField(max_length=50 )
+
+    reason = models.CharField(max_length=100)
+    leave_status = models.CharField(max_length=100)
+    type= models.CharField(max_length=100)
 
 
     class Meta:
@@ -177,6 +179,17 @@ class Prescription(models.Model):
 
     class Meta:
         db_table = "prescription"
+class Batch(models.Model):
+
+    MEDICINE= models.ForeignKey(Medicine, on_delete=models.CASCADE)
+    b_name = models.CharField(max_length=100)
+    man_date = models.DateField(max_length=100)
+    exp_date = models.DateField(max_length=100)
+    total_amount = models.CharField(max_length=50,default="0")
+    unit_amount = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = "batch"
 
 class Reminder(models.Model):
     BOOKING = models.ForeignKey(Booking, on_delete=models.CASCADE)
@@ -188,10 +201,9 @@ class Reminder(models.Model):
 
 
 class Stock(models.Model):
-    MEDICINE = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+    BATCH = models.ForeignKey(Batch, on_delete=models.CASCADE,default="2")
     quantity = models.CharField(max_length=100)
-    exp_date= models.DateField(max_length=100)
-    man_date = models.DateField(max_length=50)
+
 
 
     class Meta:

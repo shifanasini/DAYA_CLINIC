@@ -30,13 +30,17 @@ urlpatterns = [
     path('adm_edit_schedule/<str:id>', views.adm_edit_schedule),
     path('adm_update_schedule/', views.adm_update_schedule),
     path('adm_view_services/', views.adm_view_services),
-    path('adm_delete_services/<str:id>', views.adm_delete_services),
+    path('adm_delete_medicine/<str:id>', views.adm_delete_medicine),
+    path('adm_view_medicine/<str:id>', views.adm_view_medicine),
     path('adm_update_service/', views.adm_update_service),
     path('adm_edit_service/<str:id>', views.adm_edit_service),
+
     path('adm_view_tips/', views.adm_view_tips),
     path('adm_delete_tips/<str:id>', views.adm_delete_tips),
     path('adm_edit_tip/<str:id>', views.adm_edit_tip),
+    path('adm_edit_medicine/<str:id>', views.adm_edit_medicine),
     path('adm_update_tip/', views.adm_update_tip),
+    path('adm_update_medicine/', views.adm_update_medicine),
     path('adm_add_contact/', views.adm_add_contact),
 
     path('adm_add_attendance/', views.adm_add_attendance),
@@ -72,11 +76,37 @@ urlpatterns = [
     path('doc_add_next_visit/<str:bookid>', views.doc_add_next_visit),
     path('doc_add_next_visit_post/', views.doc_add_next_visit_post),
     path('doc_view_prescription/<str:bookid>', views.doc_view_prescription),
+    path('doc_view_prescription_post/', views.doc_view_prescription_post),
     path('doc_view_medicine/', views.doc_view_medicine),
+    path('a/', views.a),
+
+#####pharmacist
+    path('adm_add_medicine/',views.adm_add_medicine),
+    path('adm_view_medicine/',views.adm_view_medicine),
+    path('adm_add_batch/',views.adm_add_batch),
+    path('adm_view_Batch/',views.adm_view_Batch),
+    path('adm_update_batch/',views.adm_update_batch),
+    path('adm_update_stock/',views.adm_update_stock),
+    path('adm_edit_batch/<str:id>',views.adm_edit_batch),
+    path('adm_edit_stock/<str:id>',views.adm_edit_stock),
+    path('adm_add_stock/',views.adm_add_stock),
+    path('adm_view_stock/',views.adm_view_stock),
+    path('adm_delete_stock/<str:id>', views.adm_delete_stock),
+    path('adm_delete_batch/<str:id>', views.adm_delete_batch),
 
 
 
 
+
+
+
+
+
+
+
+
+    path('homepage_ph/', views.homepage_ph),
+    path('homepage_doc/', views.homepage_doc),
     #       android
     path("view_contact_info/", views.view_contact_info),
     path("view_about_patient/", views.view_about_patient),

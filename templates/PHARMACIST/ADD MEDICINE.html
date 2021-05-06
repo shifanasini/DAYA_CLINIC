@@ -1,0 +1,74 @@
+{% extends  'pharmacist_index.html' %}
+{% block body %}
+    <br>
+    <br><br>
+<h1 align="center">ADD MEDICINE</h1>
+
+<form action="/myapp/adm_add_medicine/" method="post">
+  <table align="center" class="table table-bordered" style="width: 400px"
+>
+    <tr>
+    <td >Medicine Name</td>
+    <td ><input name="mname" type="text" required />
+      </td>
+  </tr>
+
+  <tr>
+    <td>Type</td>
+    <td><select name="type"  class="form-control" required>
+        <option>TINCHER</option>
+        <option>SIRUP</option>
+
+    </select></td>
+
+  </tr>
+    <tr>
+    <td>Usage</td>
+    <td><textarea name="usage" cols="45" rows="5" required></textarea></td>
+  </tr>
+
+  <tr>
+    <td>Campany</td>
+    <td><input name="company" type="text" required /></td>
+
+  </tr>
+
+  <tr>
+  <td></td>
+  <td><input name="input2" type="submit" value="ADD MEDICINE" class="btn-success"/></td></tr>
+</table>
+</form>
+{#    <script>#}
+{#    function validate() {#}
+{#        var letters = /^[A-Za-z]+$/;#}
+{#        var cate = document.getElementById('name');#}
+{#        if (!cate.value.match(letters)) {#}
+{#            alert('Name should be alphabet only');#}
+{#            return false;#}
+{#        }#}
+{#         var letters = /^[A-Za-z]+$/;#}
+{#        var cate = document.getElementById('author');#}
+{#        if (!cate.value.match(letters)) {#}
+{#            alert('Author should be alphabet only');#}
+{#            return false;#}
+{#        }#}
+{#         var numbers = /^[0-9]+$/;#}
+{#        var cat=document.getElementById('price');#}
+{#        if(!cat.value.match(numbers))#}
+{#        {#}
+{#        alert(' Price should be numbers only');#}
+{##}
+{#        return false;#}
+{#        }#}
+{##}
+{#         var letters = /^[A-Za-z]+$/;#}
+{#        var cate = document.getElementById('type');#}
+{#        if (!cate.value.match(letters)) {#}
+{#            alert('Type should be alphabet only');#}
+{#            return false;#}
+{#        }#}
+{#        return true;#}
+{#    }#}
+{##}
+{#</script>#}
+{% endblock %}

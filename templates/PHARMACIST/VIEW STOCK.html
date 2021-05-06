@@ -1,0 +1,35 @@
+{% extends  'pharmacist_index.html' %}
+{% block body %}<br><br>
+<h1 align="center">VIEW STOCK</h1><br><br>
+<form action="/myapp/adm_view_medicine/" method="post"><table align="center">
+    <input type="hidden" NAME="id" value="{{ data.id }}" >
+
+<p></p>
+
+
+<table class="table table-bordered" style="width: 1300px" align="center">
+  <tr>
+    <th>Sl.No</th>
+    <th >Batch Name</th>
+    <th>Quantity</th>
+
+
+
+
+    <th colspan="2">Action</th>
+  </tr>
+    {% for i in data %}
+  <tr>
+   <td>{{ forloop.counter }}</td>
+    <td>{{ i.BATCH.b_name}}</td>
+    <td>{{ i.quantity }}</td>
+
+    <td align="center"><a href="\myapp\adm_edit_stock\{{ i.pk }}">Edit</a></td>
+    <td align="center"><a href="\myapp\adm_delete_stock\{{ i.id }}">Delete</a></td>
+  </tr>
+    {% endfor %}
+</table>
+
+
+</form>
+{% endblock %}

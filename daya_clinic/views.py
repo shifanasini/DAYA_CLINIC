@@ -7,11 +7,15 @@ from django.shortcuts import render, redirect
 # from Mod import *
 # Create your views here.
 from daya_clinic.models import Services, Tips, Employee, Login, Schedule, Feedback, About, Attandance, Contact_details, \
-    Patient, book_fee, Slot, Booking, Chat, Medicine, Prescription, Reminder
+    Patient, book_fee, Slot, Booking, Chat, Medicine, Prescription, Reminder, Leave, Batch, Stock
 
 
 def homepage(request):
     return render(request,"ADMIN/homepage.html")
+def homepage_doc(request):
+    return render(request,"DOCTOR/homepage_doc.html")
+def homepage_ph(request):
+    return render(request,"PHARMACIST/homepage_pharmacist.html")
 def login(request):
 
     if request.method=="POST":
@@ -47,14 +51,24 @@ def adm_add_schedule(request):
         from_time=request.POST['txt_frm']
         # fee=request.POST['fee']
         to_time=request.POST['txt_to']
-        doc_obj=Employee.objects.get(id=did)
-        schedule_obj =Schedule()
-        schedule_obj.day=day
-        schedule_obj.from_time=from_time
-        schedule_obj.to_time=to_time
-        # schedule_obj.fee=fee
-        schedule_obj.EMPPLOYEE=doc_obj
-        schedule_obj.save()
+
+        sch_obj=Schedule.objects.filter(EMPPLOYEE=did,from_time=from_time,to_time=to_time,day=day)
+        if sch_obj.exists():
+
+            text = "<script>alert('Schedule Already Added');window.location='/myapp/adm_add_schedule/';</script>"
+            return HttpResponse(text)
+            return (request)
+            return render(request, "ADMIN/Add schedule.html")
+
+        else:
+            doc_obj=Employee.objects.get(id=did)
+            schedule_obj =Schedule()
+            schedule_obj.day=day
+            schedule_obj.from_time=from_time
+            schedule_obj.to_time=to_time
+            # schedule_obj.fee=fee
+            schedule_obj.EMPPLOYEE=doc_obj
+            schedule_obj.save()
         text = "<script>alert('Schedule Added');window.location='/myapp/adm_add_schedule/';</script>"
         return HttpResponse(text)
     emp_obj = Employee.objects.filter(emp_type="Doctor")
@@ -76,14 +90,23 @@ def adm_update_schedule(request):
         from_time = request.POST['txt_frm']
        # fee = request.POST['fee']
         to_time = request.POST['txt_to']
-        doc_obj = Employee.objects.get(id=did)
-        schedule_obj = Schedule.objects.get(id=id)
-        schedule_obj.day = day
-        schedule_obj.from_time = from_time
-        schedule_obj.to_time = to_time
-        #schedule_obj.fee = fee
-        schedule_obj.EMPPLOYEE = doc_obj
-        schedule_obj.save()
+        sch_obj = Schedule.objects.filter(EMPPLOYEE=did,from_time=from_time, to_time=to_time, day=day)
+        if sch_obj.exists():
+
+            text = "<script>alert('Schedule Already Added');window.location='/myapp/adm_add_schedule/';</script>"
+            return HttpResponse(text)
+            return (request)
+            return render(request, "ADMIN/Add schedule.html")
+
+        else:
+            doc_obj = Employee.objects.get(id=did)
+            schedule_obj = Schedule.objects.get(id=id)
+            schedule_obj.day = day
+            schedule_obj.from_time = from_time
+            schedule_obj.to_time = to_time
+            #schedule_obj.fee = fee
+            schedule_obj.EMPPLOYEE = doc_obj
+            schedule_obj.save()
         text="<script>alert('Schedule Updated');window.location='/myapp/adm_view_schedule/';</script>"
         return HttpResponse(text)
 
@@ -335,9 +358,21 @@ def adm_add_attendance(request):
         arr.append(i.EMPLOYEE.id)
     return render(request,"ADMIN/ADD ATTENDANCE.html",{'data':res, 'arr':arr})
 def adm_view_attendance(request):
-
-    at_obj = Attandance.objects.all()
-    return render(request,"ADMIN/view attandance1.html",{'data':at_obj})
+    if request.method=='POST':
+        print("hi")
+        date1=request.POST['date1']
+        date2=request.POST['date2']
+        print(date1)
+        print(date2)
+        # at_obj=Attandance.objects.filter(date__lte=date1,date__gte=date2)
+        # at_obj=Attandance.objects.filter(date__range=[date1,date1])
+        at_obj=Attandance.objects.filter(date__range=[date1, date2])
+        print(at_obj)
+        return render(request, "ADMIN/view attandance1.html", {'data': at_obj})
+    else:
+        print("hello")
+        at_obj = Attandance.objects.filter(date=datetime.datetime.now().date())
+        return render(request,"ADMIN/view attandance1.html",{'data':at_obj})
 
 
 
@@ -605,7 +640,19 @@ def doc_add_prescription_post(request):
 def doc_view_leave_satatus(request):
     return render(request,"DOCTOR/Leave Status doctor.html")
 def doc_add_leave(request):
-    return render(request,"DOCTOR/LEAVE APPLICATION DOCTOR.html")
+ emp_obj=Employee.objects.all()
+ if request.method == 'POST':
+    docid = request.session['doc_id']
+
+
+    from_date = request.POST['date']
+    reason = request.POST['reason']
+    to_date = request.POST['todate']
+    type = request.POST['type']
+    leav_obj = Leave.objects.filter(EMPLOYEE=docid, date=from_date, reason=reason, to_date=to_date, type=type)
+    print(leav_obj)
+
+ return render(request,"DOCTOR/LEAVE APPLICATION DOCTOR.html")
 def doc_next_slot(request):
     return render(request,"DOCTOR/Next slot.html")
 def doc_add_next_visit(request,bookid):
@@ -627,16 +674,20 @@ def doc_add_next_visit_post(request):
 
     next_obj.BOOKING_id = book_id
     next_obj.save()
-    # text = "<script>alert('Next visit Added');window.location='/myapp/doc_add_next_visit/';</script>"
-    # return HttpResponse(text)
+    text = "<script>alert('Next visit Added');window.location='/myapp/doc_add_next_visit/';</script>"
+    return HttpResponse(text)
  return render(request,"DOCTOR/NEXT VISIT ENTRY.html")
 
  # return render(request,"DOCTOR/NEXT VISIT ENTRY.html")
 
 def doc_view_medicine(request):
     book_id=request.session['bookid']
+    bok_obj = Booking.objects.get(id=book_id)
     pre_obj = Prescription.objects.filter(BOOKING_id=book_id)
-    return render(request,"DOCTOR/View previous prescription.html",{'data':pre_obj})
+    pat_name = bok_obj.PATIENT.patient_name
+    request.session["pid"]=bok_obj.PATIENT.id
+    date = bok_obj.date
+    return render(request,"DOCTOR/View previous prescription.html",{'data':pre_obj,'pat_name':pat_name,'date':date})
 def doc_view_patients(request):
     docid = request.session['doc_id']
     ar=[]
@@ -651,25 +702,363 @@ def doc_view_patients(request):
             s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id}
             res.append(s)
             ar.append(i.PATIENT.id)
+
     print(res)
     return render(request,"DOCTOR/View patients doctor.html",{'data':res})
 
 def doc_view_prescription(request,bookid):
-    bok_obj=Booking.objects.get(id=bookid)
-    pat_name=bok_obj.PATIENT.patient_name
-    date=bok_obj.date
 
-    request.session['bookid']=bookid
-    pres_obj=Prescription.objects.filter(BOOKING=bok_obj)
-    return render(request,"DOCTOR/View previous prescription.html",{'pat_name':pat_name,'date':date,'data2':pres_obj})
+    request.session["uid"]=bookid
 
 
 
+    print("hi")
+    uid=bookid
+    use_obj=Patient.objects.get(id=uid)
+    print(use_obj)
+    # bok_obj=Booking.objects.get(id=bookid)
+    bok_obj=Booking.objects.filter(PATIENT=uid)
+    res=[]
+    for i in bok_obj:
+        print("zz")
+        print(i.id)
+        pre_obj=Prescription.objects.filter(BOOKING_id=i.id)
+        print(pre_obj)
+        for j in pre_obj:
+            print(j.prescription)
+            ss={'id':i.id,'pre_name':j.prescription,'mname':j.MEDICINE.name,'qty':j.qty,'unit':j.unit,'date':i.date}
+            print(ss)
+            res.append(ss)
+            print(pre_obj)
+
+        print("fini")
 
 
 
 
-                          #ANDROID.......
+    print("hi")
+    print(res)
+    return render(request, "DOCTOR/View previous prescription.html", {'pat_name': use_obj.patient_name, 'data2': res})
+
+def doc_view_prescription_post(request):
+    print("hll")
+    bookid=request.session["uid"]
+    print(bookid)
+
+    if request.method=='POST':
+        print("hi")
+
+        d1 = request.POST["dd1"]
+        print(d1)
+        d2 = request.POST['dd2']
+
+        print(d2)
+        # return HttpResponse("ok")
+        #
+        # # at_obj=Attandance.objects.filter(date__lte=date1,date__gte=date2)
+        # # at_obj=Attandance.objects.filter(date__range=[date1,date1])
+        # # at_obj=Attandance.objects.filter(date__range=[date1, date2])
+        #
+        #
+        #
+        print("hi")
+        uid = bookid
+        use_obj = Patient.objects.get(id=uid)
+        print(use_obj)
+        # bok_obj=Booking.objects.get(id=bookid)
+        bok_obj = Booking.objects.filter(PATIENT=uid,date__range=[d1, d2])
+        print(bok_obj)
+        res = []
+        for i in bok_obj:
+            print("zz")
+            print(i.id)
+            pre_obj = Prescription.objects.filter(BOOKING_id=i.id)
+            print(pre_obj)
+            for j in pre_obj:
+                print(j.prescription)
+                ss = {'id': i.id, 'pre_name': j.prescription, 'mname': j.MEDICINE.name, 'qty': j.qty, 'unit': j.unit,
+                      'date': i.date}
+                print(ss)
+                res.append(ss)
+                print(pre_obj)
+
+            print("fini")
+
+        print("hi")
+        print(res)
+        return render(request, "DOCTOR/View previous prescription.html",{'pat_name': use_obj.patient_name, 'data2': res})
+
+
+
+        # pat_name=bok_obj.PATIENT.patient_name
+    #
+    #
+    #
+    #
+    # request.session['bookid']=bookid
+    # pres_obj=Prescription.objects.filter(BOOKING=bok_obj)
+    # print(pres_obj)
+    # return render(request,"DOCTOR/View previous prescription.html",{'pat_name':pat_name,'data2':pres_obj})
+
+
+
+def a(request):
+    return render(request,"adminindex.html")
+               #pharmacistdef
+def adm_add_medicine(request):
+    if request.method=='POST':
+        name=request.POST['mname']
+        type=request.POST['type']
+        company=request.POST['company']
+        usage=request.POST['usage']
+
+        med_obj=Medicine()
+        med_obj.name=name
+        med_obj.type=type
+        med_obj.usage=usage
+        med_obj.campany=company
+
+        med_obj.save()
+        text = "<script>alert('Medicine Added');window.location='/myapp/adm_add_medicine/';</script>"
+        return HttpResponse(text)
+    return render(request,"PHARMACIST/ADD MEDICINE.html")
+def adm_delete_medicine(request,id):
+    med_obj=Medicine.objects.get(id=id)
+
+    med_obj.delete()
+    med_obj = Medicine.objects.all()
+    text = "<script>alert('Medicine Deleted');window.location='/myapp/adm_view_medicine/';</script>"
+    return HttpResponse(text)
+    return render(request, "PHARMACIST/VIEW medicine.html", {'data': med_obj})
+def adm_edit_medicine(request,id):
+    med_obj=Medicine.objects.get(id=id)
+    print(id)
+    request.session['uid']=id
+    return render(request, "PHARMACIST/UPDATE MEDICINE.html", {'data': med_obj})
+
+def adm_update_medicine(request):
+    if request.method == 'POST':
+        name = request.POST['mname']
+        type = request.POST['type']
+        usage = request.POST['usage']
+        company = request.POST['company']
+
+
+
+        hid=request.session['uid']
+        print(hid)
+        med_obj = Medicine.objects.get(pk=hid)
+        print(med_obj)
+        med_obj.name=name
+        med_obj.type=type
+        med_obj.usage=usage
+        med_obj.campany=company
+        med_obj.save()
+
+        med_obj =Medicine.objects.all()
+        text = "<script>alert('Medicine Updated');window.location='/myapp/adm_view_medicine/';</script>"
+        return HttpResponse(text)
+        return render(request, "PHARMACIST/VIEW medicine.html", {'data': med_obj})
+
+
+
+def adm_view_medicine(request):
+    if request.method=="POST":
+        med_search=request.POST['text']
+        # book_obj=book_fee.objects.get(EMPLOYEE__emp_name=emp_search)
+        med_obj=Medicine.objects.filter(name__contains=med_search)
+        return render(request, "PHARMACIST/VIEW medicine.html", {'data': med_obj})
+    med_obj =Medicine.objects.all()
+    return render(request,"PHARMACIST/VIEW medicine.html",{'data': med_obj})
+# def adm_add_batch(request):
+#     med_obj = Medicine.objects.all()
+#     if request.method=="POST":
+#         bname=request.POST['bname']
+#
+#         edate=request.POST['edate']
+#         mdate=request.POST['mdate']
+#         total_amount=request.POST['amount']
+#         unit_amount=request.POST['uamount']
+#
+#         med_id = request.POST['select']
+#         med_obj = Medicine.objects.get(pk=med_id)
+#         # medc_id = request.POST['select2']
+#         # med_obj = Medicine.objects.get(pk=medc_id)
+#         # scat_id=request.POST['selectscat']
+#         # scat_obj=sub_cat.objects.get(pk=scat_id)
+#
+#         batch_obj=Batch()
+#         batch_obj.b_name=bname
+#
+#         batch_obj.exp_date=edate
+#         batch_obj.man_date=mdate
+#         batch_obj.total_amount=total_amount
+#         batch_obj.unit_amount=unit_amount
+#
+#         batch_obj.MEDICINE = med_id
+#
+#
+#         batch_obj.save()
+#         text = "<script>alert('Batch added successfully');window.location='/myapp/adm_add_batch/';</script>"
+#         return HttpResponse(text)
+#
+#
+#     # medc_obj = Medicine.objects.all()
+#
+#     return render(request,"PHARMACIST/ADD BATCH.html",{'data1': med_obj})def adm_add_books(request):
+def adm_add_batch(request):
+    if request.method=="POST":
+        bname=request.POST['bname']
+        mdate=request.POST['mdate']
+
+        edate=request.POST['edate']
+        tamount=request.POST['amount']
+        unit_amount=request.POST['uamount']
+
+        med_id = request.POST['select']
+        med_obj = Medicine.objects.get(pk=med_id)
+
+        batch_obj = Batch()
+        batch_obj.b_name=bname
+
+        batch_obj.exp_date=edate
+        batch_obj.man_date=mdate
+        batch_obj.total_amount=tamount
+        batch_obj.unit_amount=unit_amount
+        batch_obj.MEDICINE= med_obj
+
+        batch_obj.save()
+        text = "<script>alert('Batch added successfully');window.location='/myapp/adm_add_batch/';</script>"
+        return HttpResponse(text)
+
+    med_obj = Medicine.objects.all()
+
+
+    return render(request, "PHARMACIST/ADD BATCH.html", {'data1': med_obj})
+def adm_view_Batch(request):
+
+    batch_obj = Batch.objects.all()
+    return render(request,"PHARMACIST/VIEW BATCH.html",{'data':batch_obj})
+def adm_edit_batch(request,id):
+    print("rrr")
+    request.session['id']=id
+    bat_obj=Batch.objects.get(id=id)
+    print(id)
+    med_obj=Medicine.objects.all()
+    return render(request, "PHARMACIST/UPDATE BATCH.html", {'data': bat_obj,'data1':med_obj})
+
+def adm_update_batch(request):
+    print("hi")
+    bname = request.POST['bname']
+    medicine_id=request.POST['select']
+    mdate = request.POST['mdate']
+    edate = request.POST["edate"]
+    tamount = request.POST['amount']
+    unit_amount = request.POST['uamount']
+    id = request.session['id']
+
+    med_obj = Medicine.objects.get(id=medicine_id)
+    print(med_obj)
+
+    batch_obj = Batch.objects.get(id=id)
+    batch_obj.b_name = bname
+
+    batch_obj.exp_date = edate
+    batch_obj.man_date = mdate
+    batch_obj.total_amount = tamount
+    batch_obj.unit_amount = unit_amount
+    batch_obj.MEDICINE = med_obj
+
+    batch_obj.save()
+
+    batch_obj = Batch.objects.all()
+    text = "<script>alert('Batch Updated successfully');window.location='/myapp/adm_view_Batch/';</script>"
+    return HttpResponse(text)
+
+    return render(request, "PHARMACIST/UPDATE BATCH.html", {'data': batch_obj})
+
+def adm_add_stock(request):
+    if request.method == "POST":
+
+        qty = request.POST['qty']
+
+        batch_id = request.POST['select']
+        batch_obj = Batch.objects.get(pk=batch_id)
+
+        stock_obj = Stock()
+        stock_obj.BATCH =batch_obj
+
+        stock_obj.quantity = qty
+
+
+        stock_obj.save()
+        text = "<script>alert('Stock added successfully');window.location='/myapp/adm_add_stock/';</script>"
+        return HttpResponse(text)
+
+    batch_obj = Batch.objects.all()
+
+    return render(request, "PHARMACIST/ADD STOCK.html", {'data1': batch_obj})
+
+def adm_view_stock(request):
+    stock_obj = Stock.objects.all()
+    return render(request, "PHARMACIST/VIEW STOCK.html", {'data': stock_obj})
+
+def adm_edit_stock(request, id):
+    print("rrr")
+    request.session['id'] = id
+    st_obj = Stock.objects.get(id=id)
+    print(id)
+    bat_obj = Batch.objects.all()
+    return render(request, "PHARMACIST/UPDATE STOCK.html", {'data': st_obj, 'data1': bat_obj})
+
+def adm_update_stock(request):
+    print("hi")
+    qty = request.POST['qty']
+    batch_id = request.POST['select']
+
+    id = request.session['id']
+
+    bat_obj = Batch.objects.get(id=batch_id)
+    print(bat_obj)
+
+    stock_obj = Stock.objects.get(id=id)
+    stock_obj.quantity = qty
+
+    stock_obj.BATCH = bat_obj
+
+    stock_obj.save()
+
+    stock_obj = Stock.objects.all()
+    text = "<script>alert('Stock Updated successfully');window.location='/myapp/adm_view_stock/';</script>"
+    return HttpResponse(text)
+
+    return render(request, "PHARMACIST/VIEW STOCK.html", {'data': stock_obj})
+
+def adm_delete_stock(request, id):
+    stock_obj = Stock.objects.get(id=id)
+    stock_obj.delete()
+    stock_obj = Stock.objects.all()
+    text = "<script>alert('Stock deleted successfully');window.location='/myapp/adm_view_stock/';</script>"
+    return HttpResponse(text)
+    return render(request, "PHARMACIST/VIEW STOCK.html", {'data': stock_obj})
+
+def adm_delete_batch(request, id):
+    bat_obj = Batch.objects.get(id=id)
+    bat_obj.delete()
+    bat_obj = Batch.objects.all()
+    text = "<script>alert('Batch deleted successfully');window.location='/myapp/adm_view_Batch/';</script>"
+    return HttpResponse(text)
+    return render(request, "PHARMACIST/VIEW BATCH.html", {'data': bat_obj})
+
+
+
+
+
+
+
+
+
+        #ANDROID.......
 
 
 
@@ -1039,5 +1428,10 @@ def view_message2(request):
         return JsonResponse({'status': 'ok', 'data': a})
     else:
         return JsonResponse({'status': 'no'})
+
+
+
+
+
 
 
