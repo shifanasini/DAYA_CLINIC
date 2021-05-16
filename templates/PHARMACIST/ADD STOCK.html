@@ -11,7 +11,7 @@
 <td>Select Batch</td>
  <td><select name="select" class="form-control" required>
         {% for i in data1 %}
-            <option value="{{ i.id }}">{{ i.b_name }}</option>
+            <option value="{{ i.id }}">{{ i.b_name }}-{{ i.MEDICINE.name }}-{{ i.MEDICINE.campany }}</option>
         {% endfor %}
  </select></td>
 </tr>
@@ -25,7 +25,7 @@
 {#</tr>#}
 
 
-    <td>Quanity</td>
+    <td>Quantity</td>
     <td><input type="number" name="qty" required ></td>
   </tr>
 

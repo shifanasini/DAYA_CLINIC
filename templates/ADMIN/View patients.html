@@ -1,41 +1,64 @@
 {% extends  'adminindex.html' %}
 {% block body %}
 <h1 align="center"> View Patients</h1>
-<form id="form1" name="form1" method="post" action="">
-<table class="table table-bordered">
+<form id="form1" name="form1" method="post" action="/myapp/adm_view_patients/">
+<table align="center" class="table table-bordered" style="width: 400px">
     <tr>
         <td>Paitent Name</td>
-        <td><input type="text" name=""/></td>
-        <td><input type="button" id="" name="" value="GO"/></td>
+        <td><input type="text" name="pat" class="form-control"/></td>
+        <td><input type="submit" id=""name="" value="GO" class="btn-success"/></td>
+
+
     </tr>
 
 </table>
-</form><table class="table table-bordered"  style="width:1000px">
+<table class="table table-bordered" style="width: 400px" align="center">
+    <tr>
+        <td>From Date</td>
+        <td><input type="date" name="date1" required class="form-control"></td>
+        <td>To Date</td>
+        <td><input type="date" name="date2" required class="form-control"></td>
+        <td><input type="submit" name="search" value="Go" class="btn-success"></td>
+
+    </tr>
+<table class="table table-bordered" style="width: 1300px" align="center">
+
   <tr>
-    <th>Sl.No</th>
+    <th >Sl.No</th>
     <th >Patient Name</th>
-    <th>Age</th>
-    <th>Gender</th>
-    
-    <th>Address</th>
+    <th >Age</th>
+    <th >Gender</th>
+    <th >Address</th>
 
     <th ><p>Phone Number</p></th>
+{#    <th ><p>Date</p></th>#}
     <th >Email Id</th>
-    
+    <th >Booking Date</th>
+    <th align="center">Action</th>
+
   </tr>
+    {% for i in data %}
   <tr>
-    
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
+    <td>{{ forloop.counter }}</td>
+    <td>&nbsp;{{ i.name }}</td>
+    <td>{{ i.age }}</td>
+    <td>&nbsp;{{ i.gender }}</td>
+     <td>{{i.housename }}<br>{{ i.place }}<br>{{ i.district }}<br>{{ i.state }}<br>{{ i.pincode }}</td>
+    <td>{{ i.phone_number }}</td>
+{#    <td>{{ i.date }}</td>#}
+    <td>{{ i.email }}</td>
+    <td>{{ i.date }}</td>
+    <td >
 
-
-
+  <a href="/myapp/doc_view_prescription/{{ i.id }}">Previous Prescription</a></td>
   </tr>
+    {% endfor %}
 </table>
-
-{% endblock %}
+    </form>
+      <style>
+     .form-control{
+         background-color: #ffffff;
+         color:#000000;
+         }
+    </style>
+{% endblock  %}

@@ -1,30 +1,39 @@
 {% extends  'adminindex.html' %}
 {% block body %}
-<h1 align="center"> View Stock</h1>
+<h1 align="center"> View Medicine</h1>
 <form id="form1" name="form1" method="post" action="">
 
-<table align="center">
+<table align="center" class="table table-bordered">
   <tr>
     <th >Sl.No</th>
    
     <th>Medicine Name</th>
     
     <th>Type</th>
+    <th>Batch</th>
     <th>Price</th>
-    <th >Dose</th>
+
+    <th >Unit</th>
+    <th >Quantity</th>
     <th>Campany</th>
    
       
   </tr>
+    {% for i in data %}
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-  
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.BATCH.MEDICINE.name }}</td>
+    <td>&nbsp;{{ i.BATCH.MEDICINE.type }}</td>
+    <td>&nbsp;{{ i.BATCH.b_name }}</td>
+
+    <td>{{ i.BATCH.unit_amount }}</td>
+    <td>{{ i.BATCH.MEDICINE.unit }}</td>
+    <td>{{ i.quantity }}</td>
+
+   <td>{{ i.BATCH.MEDICINE.campany }}</td>
+
   </tr>
+    {%endfor%}
 </table>
 </form>
 {% endblock %}

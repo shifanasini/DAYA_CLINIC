@@ -1,44 +1,109 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Untitled Document</title>
-</head>
-
-<body>
+{% extends  'pharmacist_index.html' %}
+{% block body %}<br><br>
 <h1 align="center">Add sale</h1>
-<table align="center">
+
+<form action="/myapp/add_sale/" method="post"><table align="center" class="table table-bordered" style="width: 400px">
+  <tr>
+    <td>Patient name</td>
+    <td>{{ pat_name }}</td>
+</tr>
+
+
+
+
+</table>
+<table align="center" class="table table-bordered" style="width: 1000px">
+    <th>Sl.No</th>
+    <th>Prescription</th>
+    <th>Date</th>
+    <th>Medicine Name</th>
+    <th>Quantity</th>
+    <th>Unit</th>
+
+
+
+
+    {% for i in data2 %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+      <td>{{ i.pre_name }}</td>
+      <td>{{ i.date }}</td>
+    <td>{{ i.mname }}</td>
+    <td>{{ i.qty }}</td>
+    <td>{{ i.unit }}</td>
+
+
+  </tr>
+    {% endfor %}
+
+</table>
+
+
+
+<table align="center" class="table table-bordered" style="width: 400px">
   <tr>
     <td>Medicine Name</td>
-    <td>&nbsp;</td>
+    <td><select name="select" class="form-control">
+        {% for i in data3 %}
+            <option value="{{ i.id }}">{{ i.MEDICINE.name }}-{{ i.b_name }}</option>
+        {% endfor %}
+ </select></td>
   </tr>
+
+
   <tr>
-    <td>Qyantity</td>
+    <td>Quantity</td>
+    <td><input type="text" class="form-control" name="qty" ></td>
+  </tr>
+
+    <td>Tax</td>
     <td>&nbsp;</td>
+
   </tr>
   <tr>
     <td></td>
-    <td><input name="" type="button" value="Add" /></td>
+    <td><input name="btn" type="submit" value="Add" class="btn-success" /></td>
   </tr>
-</table><table align="center">
+</table>
+    <table align="center" class="table table-bordered" style="width: 1000px">
   <tr>
     <th>Sl.no</th>
     <th>Medicine Name</th>
     <th>Quantity</th>
-    <th>Remove</th>
+    <th>Unit</th>
+
+
+    <th>Company</th>
+
+       <th>Unit Amount</th>
+      <th>Booking Fee</th>
+
+
+    <th></th>
     
   </tr>
+        {% for i in data4 %}
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td><a href="#">Remove</a></td>
+
+    <td>{{forloop.counter  }}</td>
+    <td>{{ i.BATCH.MEDICINE.name }}</td>
+    <td>{{ i.quantity }}</td>
+    <td>{{ i.BATCH.MEDICINE.unit }}</td>
+    <td>{{ i.BATCH.MEDICINE.campany }}</td>
+    <td>{{ i.BATCH.unit_amount }}</td>
+    <td>{{ i.BATCH. }}</td>
+
+
+
+
+
+    <td><a href="/myapp/ph_del_salesub/{{ i.pk }}">Remove</a></td>
   </tr>
+        {% endfor %}
   <tr>
     <td></td>
-    <td><input name="" type="button" value="Finish" /></td>
+    <td><input name="btn" type="submit" value="Finish" class="btn-success"/></td>
   </tr>
 </table>
-
-</body>
-</html>
+    </form>
+{% endblock %}

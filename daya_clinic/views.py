@@ -7,7 +7,8 @@ from django.shortcuts import render, redirect
 # from Mod import *
 # Create your views here.
 from daya_clinic.models import Services, Tips, Employee, Login, Schedule, Feedback, About, Attandance, Contact_details, \
-    Patient, book_fee, Slot, Booking, Chat, Medicine, Prescription, Reminder, Leave, Batch, Stock
+    Patient, book_fee, Slot, Booking, Chat, Medicine, Prescription, Reminder, Leave, Batch, Stock, Sales_master, \
+    Sales_sub
 
 
 def homepage(request):
@@ -229,7 +230,7 @@ def adm_edit_employee(request,id):
 def adm_update_employee(request):
     if request.method == 'POST':
         emp_name = request.POST['txt_name']
-       # emp_fee = request.POST['fee']
+        emp_fee = request.POST['fee']
         emp_dob = request.POST['txt_dob']
         emp_type = request.POST['selecttype']
         emp_gender = request.POST['radio_gender']
@@ -250,7 +251,7 @@ def adm_update_employee(request):
         employee_obj = Employee.objects.get(pk=hid_id)
         print(employee_obj)
         employee_obj.emp_name = emp_name
-        #employee_obj.fee = emp_fee
+        employee_obj.fee = emp_fee
         employee_obj.dob = emp_dob
         employee_obj.gender = emp_gender
         employee_obj.place = emp_place
@@ -325,7 +326,32 @@ def adm_add_contact(request):
 
     return render(request,"ADMIN/add contact info.html",{'data':cc})
 def adm_leave_approval(request):
-    return render(request,"ADMIN/Leave Approval.html")
+    request.session['id']=id
+
+    leave_obj = Leave.objects.get(id=id)
+    print(leave_obj)
+    leave_obj.leave_status = 'Accepted'
+    leave_obj.save()
+
+    return render(request,"ADMIN/Leave Approval.html",{'data':leave_obj})
+def adm_accept_leave(request,id):
+    if request.method == 'POST':
+        print(id)
+        res=Leave.objects.get(EMPLOYEE=id)
+        print(res)
+        res.leave_status='Accepted'
+        res.save()
+        text = """"<script>alert('Request accepted');window.location='/myapp/adm_leave_approval/';</script>"""
+        return HttpResponse(text)
+        return redirect("/myapp/adm_leave_approval/")
+
+def adm_leave_approval_post(request):
+    if request.method == 'POST':
+        le_obj=Leave("")
+
+    leave_obj = Leave.objects.all()
+    print(leave_obj)
+    return render(request,"ADMIN/Leave Approval.html",{'data':leave_obj})
 def admin_view_stock(request):
     return render(request,"ADMIN/LView stock.html")
 def adm_feedback_replay(request):
@@ -421,9 +447,73 @@ def adm_view_employees(request):
 def adm_view_patients(request):
     return render(request,"ADMIN/View patients.html")
 def adm_view_sales_report_main(request):
-    return render(request,"ADMIN/Sales Repor.html")
 
 
+
+    if request.method == 'POST':
+        salem_obj = Sales_master.objects.all()
+        sales_sub_obj = Sales_sub.objects.all()
+
+        print("hi")
+        date1 = request.POST['date1']
+        date2 = request.POST['date2']
+        print(date1)
+        print(date2)
+        # at_obj=Attandance.objects.filter(date__lte=date1,date__gte=date2)
+        # at_obj=Attandance.objects.filter(date__range=[date1,date1])
+        at_obj =Sales_master.objects.filter(date__range=[date1, date2])
+        s=0
+        for i in at_obj:
+            print(i.total_amount)
+            s=s+int(i.total_amount)
+
+
+
+        print(at_obj)
+        return render(request, "ADMIN/Sales Repor.html", {'data': at_obj,'tot':str(s)})
+
+
+    else:
+        import datetime
+        salem_obj = Sales_master.objects.filter(date=datetime.date.today())
+        sales_sub_obj = Sales_sub.objects.all()
+
+
+        return render(request,"ADMIN/Sales Repor.html",{'data':salem_obj,'data2':sales_sub_obj})
+
+def adm_view_medicine_sale(request,id):
+    salem_obj=Sales_master.objects.get(id=id)
+
+    sales_sub_obj = Sales_sub.objects.filter(SALE_MASTER=salem_obj)
+
+    res=[]
+
+    for i in sales_sub_obj:
+        print("hhhh")
+        bid=i.BATCH_id
+
+
+
+        print("biddd")
+        print(bid)
+        bat_obj=Batch.objects.get(id=bid)
+
+        ss=bat_obj.MEDICINE.name
+        res.append(ss)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return render(request,"ADMIN/View sales report 2.html",{'data':sales_sub_obj})
 def adm_view_schedule(request):
 
     schedule_obj = Schedule.objects.all()
@@ -515,7 +605,46 @@ def adm_update_tip(request):
 
 
 def adm_view_booking_info(request):
-    return render(request,"ADMIN/View booking info.html")
+
+    docid = request.session['doc_id']
+    bok_obj = Booking.objects.filter(date=datetime.datetime.now().date())
+    if request.method == "POST":
+        pat = request.POST['pat']
+        bok_obj = Booking.objects.filter(PATIENT__patient_name__contains=pat)
+
+    return render(request,"ADMIN/View booking info.html",{'data':bok_obj})
+def adm_view_patients(request):
+    if request.method=='POST':
+        print("hi")
+        date1=request.POST['date1']
+        date2=request.POST['date2']
+        print(date1)
+        print(date2)
+        # at_obj=Attandance.objects.filter(date__lte=date1,date__gte=date2)
+        # at_obj=Attandance.objects.filter(date__range=[date1,date1])
+        at_obj=Booking.objects.filter(date__range=[date1, date2])
+        print(at_obj)
+        return render(request, "ADMIN/View patients.html", {'data': at_obj})
+    else:
+        ar=[]
+        res=[]
+        import datetime
+        today = datetime.date.today()
+        book_obj = Booking.objects.filter(date__year=today.year,
+                               date__month=today.month)
+        if request.method=="POST":
+            pat=request.POST['pat']
+            book_obj = Booking.objects.filter(PATIENT__patient_name__contains=pat)
+        print(len(book_obj))
+        for i in book_obj:
+            if i.PATIENT.id not in ar:
+
+                s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id,'date':i.date}
+                res.append(s)
+                ar.append(i.PATIENT.id)
+
+        print(res)
+        return render(request,"ADMIN/View patients.html",{'data':res})
 
 def adm_add_about(request):
     if request.method=='POST':
@@ -597,6 +726,340 @@ def doc_view_booking(request):
         pat=request.POST['pat']
         bok_obj = Booking.objects.filter(EMPLOYEE_id=docid,PATIENT__patient_name__contains=pat)
     return render(request,"DOCTOR/View booking doctor.html",{'data':bok_obj})
+def ph_view_booking(request):
+    docid=request.session['doc_id']
+    bok_obj = Booking.objects.filter(date=datetime.datetime.now().date())
+    if request.method=="POST":
+        pat=request.POST['pat']
+        bok_obj = Booking.objects.filter(PATIENT__patient_name__contains=pat)
+    return render(request,"PHARMACIST/View booking pharmacist.html",{'data':bok_obj})
+def ph_view_prescription(request,bookid):
+
+    request.session["uid"]=bookid
+
+
+
+    print("hi")
+    uid=bookid
+    use_obj=Patient.objects.get(id=uid)
+    print(use_obj)
+    # bok_obj=Booking.objects.get(id=bookid)
+    import datetime
+
+    showtime = datetime.date.today()
+    print(showtime)
+    print("asss")
+    bok_obj=Booking.objects.filter(PATIENT=uid,date=showtime)
+    print(bok_obj)
+    res=[]
+    for i in bok_obj:
+        print("zz")
+        print(i.id)
+        print(i.date)
+        pre_obj=Prescription.objects.filter(BOOKING_id=i.id)
+        print(pre_obj)
+
+        for j in pre_obj:
+            print(j.prescription)
+
+            ss={'id':id,'pre_name':j.prescription,'mname':j.MEDICINE.name,'qty':j.qty,'unit':j.unit,'date':i.date}
+            print(ss)
+            res.append(ss)
+            print(pre_obj)
+
+        print("fini")
+
+
+
+
+
+    print("hi")
+    print(res)
+    res2=[]
+    for i in bok_obj:
+        print("zz")
+        print(i.id)
+        print(i.date)
+        pre_obj = Prescription.objects.filter(BOOKING_id=i.id)
+        print(pre_obj)
+        for j in pre_obj:
+            print(j.prescription)
+            ss = {'id': i.id, 'mname': j.MEDICINE.name,
+                  }
+            print(ss)
+            res2.append(ss)
+            print(pre_obj)
+
+        print("fini")
+
+    print("hi")
+    print(res)
+    return render(request, "PHARMACIST/View prescription pharmacist.html", {'pat_name': use_obj.patient_name, 'data2': res,'data3':res2})
+
+# def ph_view_prescription(request):
+#     print("hll")
+#     bookid=request.session["uid"]
+#     print(bookid)
+#
+#     if request.method=='POST':
+#         print("hi")
+#
+#         d1 = request.POST["dd1"]
+#         print(d1)
+#         d2 = request.POST['dd2']
+#
+#         print(d2)
+#         # return HttpResponse("ok")
+#         #
+#         # # at_obj=Attandance.objects.filter(date__lte=date1,date__gte=date2)
+#         # # at_obj=Attandance.objects.filter(date__range=[date1,date1])
+#         # # at_obj=Attandance.objects.filter(date__range=[date1, date2])
+#         #
+#         #
+#         #
+#         print("hi")
+#         uid = bookid
+#         use_obj = Patient.objects.get(id=uid)
+#         print(use_obj)
+#         # bok_obj=Booking.objects.get(id=bookid)
+#         bok_obj = Booking.objects.filter(PATIENT=uid,date__range=[d1, d2])
+#         print(bok_obj)
+#         res = []
+#         for i in bok_obj:
+#             print("zz")
+#             print(i.id)
+#             pre_obj = Prescription.objects.filter(BOOKING_id=i.id)
+#             print(pre_obj)
+#             for j in pre_obj:
+#                 print(j.prescription)
+#                 ss = {'id': i.id, 'pre_name': j.prescription, 'mname': j.MEDICINE.name, 'qty': j.qty, 'unit': j.unit,
+#                       'date': i.date}
+#                 print(ss)
+#                 res.append(ss)
+#                 print(pre_obj)
+#
+#             print("fini")
+#
+#         print("hi")
+#         print(res)
+
+#         return render(request, "PHARMACIST/View prescription pharmacist.html",{'pat_name': use_obj.patient_name, 'data2': res})
+
+
+def add_sale(request):
+    a=request.POST['btn']
+    if request.method == 'POST':
+        if a=='Add':
+
+            print("ss")
+            sale_id = request.session["mid"]
+            print(sale_id)
+
+
+            bat_name = request.POST['select']
+            print(bat_name)
+
+
+            batch_obj = Batch.objects.get(pk=bat_name)
+
+            print(batch_obj)
+            st_obj=Stock.objects.get(BATCH=batch_obj)
+            st_count=int(st_obj.quantity)
+            print(st_count)
+
+            # batch_obj=Batch.objects.get(MEDICINE=med_obj)
+
+
+            qty = request.POST['qty']
+            ac_count=int(qty)
+            print(ac_count)
+            print("hlo")
+            if st_count>=ac_count:
+                print("qqqq")
+                salem_obj=Sales_master.objects.get(pk=sale_id)
+
+
+
+
+                sale_obj = Sales_sub(SALE_MASTER=salem_obj, quantity=qty, BATCH=batch_obj)
+                sale_obj.save()
+            else:
+                book_id=request.session["uid"]
+                print("out of stock")
+                text = "<script>alert('OUT OF STOCK');</script>"
+                print(text)
+                return HttpResponse(text)
+            #####test#######
+            batch22 = Batch.objects.all()
+            print(batch22)
+
+            bookid = request.session["uid"]
+
+            print("hi")
+            uid = bookid
+            use_obj = Patient.objects.get(id=uid)
+            print(use_obj)
+            # bok_obj=Booking.objects.get(id=bookid)
+            import datetime
+
+            showtime = datetime.date.today()
+            print(showtime)
+            print("asss")
+            bok_obj = Booking.objects.filter(PATIENT=uid, date=showtime)
+            print(bok_obj)
+            res = []
+            for i in bok_obj:
+                print("zz")
+                print(i.id)
+                print(i.date)
+                pre_obj = Prescription.objects.filter(BOOKING_id=i.id)
+                print(pre_obj)
+                for j in pre_obj:
+                    print(j.prescription)
+                    ss = {'id': i.id, 'pre_name': j.prescription, 'mname': j.MEDICINE.name, 'qty': j.qty, 'unit': j.unit,
+                          'date': i.date}
+                    print(ss)
+                    res.append(ss)
+                    print(pre_obj)
+
+                print("fini")
+
+            print("hi")
+            print(res)
+            print(sale_id)
+            salenew_obj=Sales_sub.objects.filter(SALE_MASTER=sale_id)
+            print(salenew_obj)
+            print(batch22)
+
+
+
+
+
+            return render(request, "PHARMACIST/saLe entry.html",
+                          {'pat_name': use_obj.patient_name, 'data2': res, 'data3': batch22,'data4':salenew_obj})
+        else:
+            print("xxx")
+            sale_id = request.session["mid"]
+            print(sale_id)
+            salemaster_obj=Sales_master.objects.get(id=sale_id)
+            print(salemaster_obj)
+            sini=Sales_sub.objects.filter(SALE_MASTER=salemaster_obj)
+            print(sini)
+            doc_id=request.session['doc_id']
+            doc_obj=Employee.objects.get(id=doc_id)
+            fee_obj=book_fee.objects.get(EMPLOYEE=doc_obj)
+            kk=fee_obj.fee
+            cc=0
+            for i in sini:
+                print("mm")
+                ###########
+                bid=i.BATCH.id
+
+                print("bid=",bid)
+                bat11_obj=Batch.objects.get(id=bid)
+                print(bat11_obj)
+                medicine_name=bat11_obj.MEDICINE.name
+                stock_obj=Stock.objects.get(BATCH=bat11_obj)
+                print(stock_obj)
+                stock_no=stock_obj.quantity
+                print(stock_no)
+                new_stock=int(stock_no)-int(i.quantity)
+                print(new_stock)
+                if new_stock >0:
+                    print("wwwww")
+
+
+
+
+
+
+
+
+
+
+                    qt_obj = Stock.objects.get(pk=stock_obj.id)
+                    print(qt_obj)
+
+
+                    qt_obj.quantity = int(new_stock)
+                    qt_obj.save()
+                    print("gggggg")
+                    cc = cc + int(i.quantity) * int(i.BATCH.unit_amount)
+
+                    print("mm")
+
+                    print()
+                    cc = cc + int(kk)
+
+                    s_obj = Sales_master.objects.get(pk=sale_id)
+                    print(s_obj)
+
+                    s_obj.total_amount = str(cc)
+                    s_obj.save()
+                    print("mm")
+                else:
+
+
+                  print("OUT OF STOCK=",medicine_name)
+
+                  # return HttpResponse("OUT OF STOCK",)
+
+            return render(request, "PHARMACIST/homepage_pharmacist.html")
+
+                ##############
+
+
+
+
+
+    return render(request,"PHARMACIST/saLe entry.html")
+def ph_del_salesub(request,id):
+    sale_id = request.session["mid"]
+    salesub_obj=Sales_sub.objects.get(id=id)
+    salesub_obj.delete()
+    medicine22 = Medicine.objects.all()
+
+    bookid = request.session["uid"]
+
+    print("hi")
+    uid = bookid
+    use_obj = Patient.objects.get(id=uid)
+    print(use_obj)
+    # bok_obj=Booking.objects.get(id=bookid)
+    import datetime
+
+    showtime = datetime.date.today()
+    print(showtime)
+    print("asss")
+    bok_obj = Booking.objects.filter(PATIENT=uid, date=showtime)
+    print(bok_obj)
+    res = []
+    for i in bok_obj:
+        print("zz")
+        print(i.id)
+        print(i.date)
+        pre_obj = Prescription.objects.filter(BOOKING_id=i.id)
+        print(pre_obj)
+        for j in pre_obj:
+            print(j.prescription)
+            ss = {'id': i.id, 'pre_name': j.prescription, 'mname': j.MEDICINE.name, 'qty': j.qty, 'unit': j.unit,
+                  'date': i.date}
+            print(ss)
+            res.append(ss)
+            print(pre_obj)
+
+        print("fini")
+
+    print("hi")
+    print(res)
+    print(sale_id)
+    salenew_obj = Sales_sub.objects.filter(SALE_MASTER=sale_id)
+    print(salenew_obj)
+
+    return render(request, "PHARMACIST/saLe entry.html",
+                  {'pat_name': use_obj.patient_name, 'data2': res, 'data3': medicine22, 'data4': salenew_obj})
+
+    return add_sale(request)
 
 def homepage_doctor(request):
     return render(request,"DOCTOR/homepage_doc.html")
@@ -604,11 +1067,12 @@ def homepage_doctor(request):
 def doc_add_prescription(request,bookid):
     bok_obj=Booking.objects.get(id=bookid)
     pat_name=bok_obj.PATIENT.patient_name
+    pat_n=bok_obj.PATIENT.phone_number
     date=bok_obj.date
     med_obj=Medicine.objects.all()
     request.session['bookid']=bookid
     pres_obj=Prescription.objects.filter(BOOKING=bok_obj)
-    return render(request,"DOCTOR/ADD PRESCRIPTION.html",{'data':med_obj,'pat_name':pat_name,'date':date,'data2':pres_obj})
+    return render(request,"DOCTOR/ADD PRESCRIPTION.html",{'data':med_obj,'pat_name':pat_name,'date':date,'data2':pres_obj,'pat_n':pat_n})
 
 def doc_del_presc(request,id):
     pr=Prescription.objects.get(id=id)
@@ -640,19 +1104,26 @@ def doc_add_prescription_post(request):
 def doc_view_leave_satatus(request):
     return render(request,"DOCTOR/Leave Status doctor.html")
 def doc_add_leave(request):
- emp_obj=Employee.objects.all()
- if request.method == 'POST':
-    docid = request.session['doc_id']
+    if request.method == 'POST':
+        docid = request.session['doc_id']
+        emp_obj = Employee.objects.get(pk=docid)
+        print(emp_obj)
+        from_date = request.POST['date']
+        reason = request.POST['reason']
+        to_date = request.POST['todate']
+        type = request.POST['type']
+        leav_obj = Leave(EMPLOYEE=emp_obj,date=from_date,reason=reason,to_date=to_date,type=type,leave_status='pending')
+        leav_obj.save()
+        print(leav_obj)
+        #sct
+        text = "<script>alert('Leave Applied');window.location='/myapp/homepage_doc/';</script>"
+        return HttpResponse(text)
 
 
-    from_date = request.POST['date']
-    reason = request.POST['reason']
-    to_date = request.POST['todate']
-    type = request.POST['type']
-    leav_obj = Leave.objects.filter(EMPLOYEE=docid, date=from_date, reason=reason, to_date=to_date, type=type)
-    print(leav_obj)
+    return render(request, "DOCTOR/LEAVE APPLICATION DOCTOR.html")
 
- return render(request,"DOCTOR/LEAVE APPLICATION DOCTOR.html")
+
+
 def doc_next_slot(request):
     return render(request,"DOCTOR/Next slot.html")
 def doc_add_next_visit(request,bookid):
@@ -699,7 +1170,8 @@ def doc_view_patients(request):
     print(len(book_obj))
     for i in book_obj:
         if i.PATIENT.id not in ar:
-            s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id}
+
+            s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id,'date':i.date}
             res.append(s)
             ar.append(i.PATIENT.id)
 
@@ -788,9 +1260,76 @@ def doc_view_prescription_post(request):
         print(res)
         return render(request, "DOCTOR/View previous prescription.html",{'pat_name': use_obj.patient_name, 'data2': res})
 
+def view_prescription_post(request):
+
+    if request.method == 'POST':
+        bookid = request.session["uid"]
+        uid = bookid
+        use_obj = Patient.objects.get(id=uid)
+        ph_n=request.POST['number']
+        import datetime
+        date=datetime.date.today()
 
 
-        # pat_name=bok_obj.PATIENT.patient_name
+
+        sale_obj =Sales_master(PATIENT=use_obj,date=date,phone_number=ph_n,total_amount="0")
+        sale_obj.save()
+        ab=Sales_master.objects.latest('id')
+        mid22=ab.pk
+        request.session["mid"]=mid22
+     #####test###
+        Batch22=Batch.objects.all()
+
+        bookid=request.session["uid"]
+
+
+        print("hi")
+        uid = bookid
+        use_obj = Patient.objects.get(id=uid)
+        print(use_obj)
+        # bok_obj=Booking.objects.get(id=bookid)
+        import datetime
+
+        showtime = datetime.date.today()
+        print(showtime)
+        print("asss")
+        bok_obj = Booking.objects.filter(PATIENT=uid, date=showtime)
+        print(bok_obj)
+        res = []
+        for i in bok_obj:
+            print("zz")
+            print(i.id)
+            print(i.date)
+            pre_obj = Prescription.objects.filter(BOOKING_id=i.id)
+            print(pre_obj)
+            for j in pre_obj:
+                print(j.prescription)
+                ss = {'id': i.id, 'pre_name': j.prescription, 'mname': j.MEDICINE.name, 'qty': j.qty, 'unit': j.unit,
+                      'date': i.date}
+                print(ss)
+                res.append(ss)
+                print(pre_obj)
+
+            print("fini")
+
+        print("hi")
+        print(res)
+        return render(request, "PHARMACIST/saLe entry.html",
+                      {'pat_name': use_obj.patient_name, 'data2': res,'data3':Batch22})
+
+
+
+
+    return render(request, "PHARMACIST/saLe entry.html",{'data':sale_obj})
+
+
+
+
+
+
+
+
+                # pat_name=bok_obj.PATIENT.patient_name
     #
     #
     #
@@ -811,12 +1350,14 @@ def adm_add_medicine(request):
         type=request.POST['type']
         company=request.POST['company']
         usage=request.POST['usage']
+        unit=request.POST['unit']
 
         med_obj=Medicine()
         med_obj.name=name
         med_obj.type=type
         med_obj.usage=usage
         med_obj.campany=company
+        med_obj.unit=unit
 
         med_obj.save()
         text = "<script>alert('Medicine Added');window.location='/myapp/adm_add_medicine/';</script>"
@@ -842,6 +1383,7 @@ def adm_update_medicine(request):
         type = request.POST['type']
         usage = request.POST['usage']
         company = request.POST['company']
+        unit = request.POST['unit']
 
 
 
@@ -852,7 +1394,9 @@ def adm_update_medicine(request):
         med_obj.name=name
         med_obj.type=type
         med_obj.usage=usage
+
         med_obj.campany=company
+        med_obj.unit = unit
         med_obj.save()
 
         med_obj =Medicine.objects.all()
@@ -938,6 +1482,7 @@ def adm_add_batch(request):
 def adm_view_Batch(request):
 
     batch_obj = Batch.objects.all()
+
     return render(request,"PHARMACIST/VIEW BATCH.html",{'data':batch_obj})
 def adm_edit_batch(request,id):
     print("rrr")
@@ -1050,10 +1595,18 @@ def adm_delete_batch(request, id):
     return HttpResponse(text)
     return render(request, "PHARMACIST/VIEW BATCH.html", {'data': bat_obj})
 
+def doc_out(request):
+    out_obj = Stock.objects.filter(quantity=0)
+    return render(request, "PHARMACIST/VIEW OUT OF STOCK.html", {'data': out_obj})
 
+def exp_med(request):
+    exp_obj = Batch.objects.filter(exp_date__lt=datetime.datetime.now())
+    return render(request, "PHARMACIST/view Expiered product.html", {'data': exp_obj})
 
-
-
+# def leav_approval(request):
+#     leave_obj = Leave.objects.all()
+#     print(leave_obj)
+#     return render(request, "ADMIN/Leave Approval.html", {'data': leave_obj})
 
 
 
@@ -1264,6 +1817,19 @@ def view_timeslots(request):
     print(start_time)
     print(end_time)
     date=request.POST['date']
+    ######newcode#####
+    print("hkk")
+    print(date)
+    ak=[]
+    pp=str(date)
+    ak=pp.split("-")
+    nwdate=""
+    print("aaa")
+    nwdate=ak[2]+"-"+ak[1]+"-"+ak[0]
+    print(nwdate)
+    date=nwdate
+    print(date)
+    #######newcod######
     sch_id=request.POST['sch_id']
 
     # chk
@@ -1271,6 +1837,9 @@ def view_timeslots(request):
 
     start_dt = dt.datetime.strptime(str(start_time), '%H:%M:%S')
     end_dt = dt.datetime.strptime(str(end_time), '%H:%M:%S')
+
+
+
     diff = (end_dt - start_dt)
     aa = diff.seconds / 60
     print("time=", diff)
@@ -1288,6 +1857,8 @@ def view_timeslots(request):
         t1 = dt.datetime.strptime(str(start_time), '%H:%M:%S')
         t2 = dt.datetime.strptime('00:15:00', '%H:%M:%S')
         time_zero = dt.datetime.strptime('00:00:00', '%H:%M:%S')
+
+
         print((t1 - time_zero + t2).time())
         qq = (t1 - time_zero + t2).time()
         ms22 = str(qq)
@@ -1330,6 +1901,21 @@ def booking(request):
 
     emp_id = request.POST['doc_id']
     dt=request.POST['dt']
+    ######newcode
+    print("date")
+    print(dt)
+    print("hkk")
+
+    ak = []
+    pp = str(dt)
+    ak = pp.split("-")
+    nwdate = ""
+    print("aaa")
+    nwdate = ak[2] + "-" + ak[1] + "-" + ak[0]
+    print(nwdate)
+    dt = nwdate
+    print(dt)
+    ###newcode###
     emp_obj = Employee.objects.get(id=emp_id)
     pa_id = request.POST['pa_id']
     print("hi5")
@@ -1428,6 +2014,52 @@ def view_message2(request):
         return JsonResponse({'status': 'ok', 'data': a})
     else:
         return JsonResponse({'status': 'no'})
+def user_update(request):
+    if request.method == "POST":
+        print("entr")
+        name = request.POST['name']
+        age = request.POST['age']
+        email = request.POST['email']
+        gender = request.POST['gender']
+        hname = request.POST['house_name']
+        city = request.POST['place']
+        district = request.POST['district']
+        pincode = request.POST['pincode']
+        phone = request.POST['phone']
+        state = request.POST['state']
+        lid = request.POST['lid']
+        print(lid)
+        print("qqq")
+
+        log_obj = Login.objects.get(id=lid)
+
+        upd_obj = Patient.objects.get(LOGIN=log_obj)
+        upd_obj.patient_name = name
+        upd_obj.age = age
+        upd_obj.emial_Id = email
+        upd_obj.gender = gender
+        upd_obj.house_name = hname
+        upd_obj.place = city
+        upd_obj.district = district
+        upd_obj.state = state
+        upd_obj.pincode = pincode
+        upd_obj.phone_number = phone
+        upd_obj.save()
+
+        data = {"status": "ok"}
+        return JsonResponse(data)
+
+
+def view_profile(request):
+    lid = request.POST['lid']
+    log_obj =Login.objects.get(id=lid)
+    user_obj =Patient.objects.get(LOGIN=log_obj)
+
+    data = {"status": "ok", 'name': user_obj.patient_name,'email': user_obj.emial_Id, 'age':user_obj.age ,'gender': user_obj.gender,
+            'hname': user_obj.housename, 'place': user_obj.place, 'district': user_obj.district,
+            'pincode': user_obj.pincode, 'phone': user_obj.phone_number,'state': user_obj.state}
+    print(data)
+    return JsonResponse(data)
 
 
 

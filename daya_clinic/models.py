@@ -27,6 +27,7 @@ class Employee(models.Model):
     phone_number = models.CharField(max_length=50)
     qualification = models.CharField(max_length=50)
     photo = models.CharField(max_length=300)
+    # fee = models.CharField(max_length=300,default="100")
 
     class Meta:
         db_table="employee"
@@ -163,6 +164,7 @@ class Medicine(models.Model):
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=50)
     usage = models.CharField(max_length=50)
+    unit = models.CharField(max_length=100, default="0")
 
     campany = models.CharField(max_length=50)
 
@@ -221,8 +223,11 @@ class Sales_master(models.Model):
 
 class Sales_sub(models.Model):
     SALE_MASTER = models.ForeignKey(Sales_master, on_delete=models.CASCADE)
-    MEDICINE= models.ForeignKey(Medicine, on_delete=models.CASCADE)
+    BATCH= models.ForeignKey(Batch, on_delete=models.CASCADE)
+
     quantity = models.CharField(max_length=100)
+
+
 
 
     class Meta:

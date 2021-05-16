@@ -1,22 +1,29 @@
 {% extends  'adminindex.html' %}
 {% block body %}
 <h1 align="center">Leave Request</h1>
-<form action="" method="get">
-<table border="1" align="center">
+<form action="adm_accept_leave" method="post">
+<table class="table table-bordered" align="center" style="width: 1000px">
   <tr>
-    <th width="85">Sl.No</th>
-    <th width="179">Employee Name</th>
-    <th width="146">Date</th>
-    <th width="146">Reason</th>
-    <th width="146">Action</th>
+    <th>Sl.No</th>
+    <th>Employee Name</th>
+    <th>From Date</th>
+    <th>To Date</th>
+    <th>Reason</th>
+    <th>Type</th>
+    <th >Action</th>
   </tr>
+     {% for i in data %}
   <tr>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
-    <td align="center"><input name="" type="button"  value="Approve"/></td>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.EMPLOYEE.emp_name }}</td>
+    <td>{{ i.date }}</td>
+    <td>&nbsp;{{ i.to_date }}</td>
+    <td>{{ i.reason }}</td>
+    <td>{{ i.type }}</td>
+
+    <td align="center"><input name="btn" type="submit" class="btn-success" value="Approve"/></td>
   </tr>
+    {% endfor %}
 </table>
 
 

@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'myproject2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':  'daya_clinic',
+        'NAME':  'dc',
         'HOST':  'localhost',
         'USER':  'root',
         'PASSWORD':  '',

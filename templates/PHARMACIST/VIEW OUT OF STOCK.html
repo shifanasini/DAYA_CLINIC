@@ -1,8 +1,8 @@
 {% extends  'pharmacist_index.html' %}
 {% block body %}<br><br>
-<h1 align="center">VIEW EXPIERED MEDICINE</h1><br><br>
+<h1 align="center">VIEW OUT OF STOCK MEDICINE</h1><br><br>
 <form action="/myapp/adm_view_medicine/" method="post"><table align="center">
-    <input type="hidden" NAME="id" value="{{ data.id }}" >
+
 
 {#    <tr>#}
 {#        <td>Medicine Name &nbsp;&nbsp;</td>#}
@@ -20,23 +20,18 @@
     <th>Batch Name</th>
     <th >Medicine Name</th>
     <th >Company</th>
-    <th>Manufacture Date</th>
-    <th>Expire Date</th>
-{#    /<th>Quantity</th>#}
 
 
 
 
+
+  </tr>
     {% for i in data %}
   <tr>
    <td>{{ forloop.counter }}</td>
-    <td>{{ i.b_name}}</td>
-    <td>{{ i.MEDICINE.name }}</td>
-    <td>{{ i.MEDICINE.campany }}</td>
-    <td>{{ i.man_date }}</td>
-    <td>{{ i.exp_date }}</td>
-{#    <td>{{ i.BATCH.quantity }}</td>#}
-
+    <td>{{ i.BATCH.b_name}}</td>
+    <td>{{ i.BATCH.MEDICINE.name }}</td>
+    <td>{{ i.BATCH.MEDICINE.campany }}</td>
 
   </tr>
     {% endfor %}

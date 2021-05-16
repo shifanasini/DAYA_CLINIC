@@ -13,6 +13,7 @@ urlpatterns = [
     path('adm_delete_about/<str:id>', views.adm_delete_about),
     path('adm_edit_about/<str:id>', views.adm_edit_about),
     path('adm_edit_about/<str:id>', views.adm_edit_about),
+    path('adm_accept_leave/<str:id>', views.adm_accept_leave),
     path('adm_employee_registration/', views.adm_employee_registration),
     path('adm_employee_updation/', views.adm_update_employee),
     path('adm_feedback/', views.adm_feedback),
@@ -25,6 +26,7 @@ urlpatterns = [
     path('adm_edit_employee/<str:id>', views.adm_edit_employee),
     path('adm_view_patients/', views.adm_view_patients),
     path('adm_view_sales_report_main/', views.adm_view_sales_report_main),
+    path('adm_view_medicine_sale/<str:id>', views.adm_view_medicine_sale),
     path('adm_view_schedule/', views.adm_view_schedule),
     path('adm_delete_schedule/<str:id>', views.adm_delete_schedule),
     path('adm_edit_schedule/<str:id>', views.adm_edit_schedule),
@@ -49,6 +51,7 @@ urlpatterns = [
     path('adm_checkout/',views.adm_checkout),
     path('adm_checkout_post/',views.adm_checkout_post),
     path('adm_view_booking_info/', views.adm_view_booking_info),
+    path('adm_view_patients/', views.adm_view_patients),
     path('homepage/', views. homepage),
     path('homepage_doctor/', views.homepage_doctor),
     path('doc_add_prescription/<str:bookid>', views.doc_add_prescription),
@@ -62,6 +65,7 @@ urlpatterns = [
     path('doc_view_patients/', views. doc_view_patients),
     # path('doc_view_prescription/', views. doc_view_prescription),
     path('doc_view_schedule/', views. doc_view_schedule),
+    # path('leav_approval/', views. leav_approval),
 
 
 
@@ -93,6 +97,13 @@ urlpatterns = [
     path('adm_view_stock/',views.adm_view_stock),
     path('adm_delete_stock/<str:id>', views.adm_delete_stock),
     path('adm_delete_batch/<str:id>', views.adm_delete_batch),
+    path('ph_del_salesub/<str:id>', views.ph_del_salesub),
+    path('med_out/', views.doc_out),
+    path('exp_med/', views.exp_med),
+    path('ph_view_booking/', views.ph_view_booking),
+    path('ph_view_prescription/<str:bookid>', views.ph_view_prescription),
+    path('add_sale/', views.add_sale),
+    path('view_prescription_post/', views.view_prescription_post),
 
 
 
@@ -121,7 +132,8 @@ urlpatterns = [
     path("user_login/", views.user_login),
     path("booking/", views.booking),
     path("inmessage/", views.inmessage),
-    path("view_message2/", views.view_message2),
+    path("view_profile/", views.view_profile),
+    path("user_update/", views.user_update),
 
 
 
