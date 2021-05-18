@@ -93,6 +93,7 @@ class Late_message(models.Model):
     EMPPLOYEE = models.ForeignKey(Employee, on_delete=models.CASCADE)
     date= models.DateField(max_length=50)
     arriving_time = models.TimeField(max_length=50)
+    reason = models.CharField(max_length=100,default="aaa")
 
 
     class Meta:

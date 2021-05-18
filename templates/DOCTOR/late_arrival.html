@@ -1,0 +1,29 @@
+{% extends  'doctorindex.html' %}
+{% block body %}
+
+<br><br><br>
+  <form action="/myapp/doc_add_late/" method="post">
+<h2 align="center"> LATE ARRIVAL</h2>
+<table align="center" class="table table-bordered" style="width: 400px" >
+
+  <tr>
+    <td>Date</td>
+    <td><input type="date" name="date" class="form-control" required></td>
+  </tr>
+
+    <tr>
+    <td>Arrival Time</td>
+    <td><input type="time" name="time" class="form-control" required></td>
+  </tr>
+     <tr>
+    <td>Reason</td>
+    <td><textarea name="reason" cols="45" rows="5" required></textarea></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><input name="" type=Submit value="ADD" class="btn-success"/></td>
+  </tr>
+</table>
+
+</form>
+{% endblock %}

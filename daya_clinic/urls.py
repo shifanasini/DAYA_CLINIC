@@ -17,13 +17,15 @@ urlpatterns = [
     path('adm_employee_registration/', views.adm_employee_registration),
     path('adm_employee_updation/', views.adm_update_employee),
     path('adm_feedback/', views.adm_feedback),
-    path('adm_leave_approval/', views.adm_leave_approval),
+    # path('adm_leave_approval/', views.adm_leave_approval),
+    path('adm_leave_approval_post/', views.adm_leave_approval_post),
     path('admin_view_stock/', views.admin_view_stock),
     path('adm_feedback_replay/', views.adm_feedback_replay),
     path('adm_view_employees/', views.adm_view_employees),
     path('adm_delete_employee/<str:id>', views.adm_delete_employee),
     path('adm_edit_employee/<str:id>', views.adm_edit_employee),
     path('adm_edit_employee/<str:id>', views.adm_edit_employee),
+    path('adm_leave_approval/<str:id>', views.adm_leave_approval),
     path('adm_view_patients/', views.adm_view_patients),
     path('adm_view_sales_report_main/', views.adm_view_sales_report_main),
     path('adm_view_medicine_sale/<str:id>', views.adm_view_medicine_sale),
@@ -82,6 +84,7 @@ urlpatterns = [
     path('doc_view_prescription/<str:bookid>', views.doc_view_prescription),
     path('doc_view_prescription_post/', views.doc_view_prescription_post),
     path('doc_view_medicine/', views.doc_view_medicine),
+    path('doc_view_messages/', views.doc_view_messages),
     path('a/', views.a),
 
 #####pharmacist
@@ -104,6 +107,8 @@ urlpatterns = [
     path('ph_view_prescription/<str:bookid>', views.ph_view_prescription),
     path('add_sale/', views.add_sale),
     path('view_prescription_post/', views.view_prescription_post),
+    path('doc_add_late/', views.doc_add_late),
+    path('doc_view_leave_status/', views.doc_view_leave_status),
 
 
 
@@ -134,8 +139,13 @@ urlpatterns = [
     path("inmessage/", views.inmessage),
     path("view_profile/", views.view_profile),
     path("user_update/", views.user_update),
+    path("view_message2/", views.view_message2),
 
 
-
+#####
+path('fet_chat', views.chatload),
+    path('drviewmsg/<str:receiverid>', views.drviewmsg),
+    path('chatview/', views.chatview),
+    path('doctor_insert_chat/<str:receiverid>/<str:msg>', views.doctor_insert_chat),
 
 ]

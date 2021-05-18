@@ -1,7 +1,7 @@
 {% extends  'adminindex.html' %}
 {% block body %}
 <h1 align="center">Leave Request</h1>
-<form action="adm_accept_leave" method="post">
+<form action="" method="post">
 <table class="table table-bordered" align="center" style="width: 1000px">
   <tr>
     <th>Sl.No</th>
@@ -21,7 +21,8 @@
     <td>{{ i.reason }}</td>
     <td>{{ i.type }}</td>
 
-    <td align="center"><input name="btn" type="submit" class="btn-success" value="Approve"/></td>
+    </td><td align="center"><a href="/myapp/adm_leave_approval/{{ i.pk }}">APPROVE</a></td>
+
   </tr>
     {% endfor %}
 </table>

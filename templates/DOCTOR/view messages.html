@@ -1,0 +1,29 @@
+{% extends  'doctorindex.html' %}
+{% block body %}
+<h1 align="center">VIEW MESSAGES</h1>
+<form action="" method="post">
+<table class="table table-bordered" align="center" style="width: 1000px">
+  <tr>
+    <th>Sl.No</th>
+    <th>Patient Name</th>
+    <th>Phone Number</th>
+    <th>Email</th>
+
+    <th >Action</th>
+  </tr>
+     {% for i in data %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ i.PATIENT.patient_name }}</td>
+    <td>{{ i.PATEINT.phone_number}}</td>
+    <td>{{ i.PATEINT.email}}</td>
+
+
+    <td align="center"><input name="btn" type="submit" class="btn-success" value="Chat"/></td>
+  </tr>
+    {% endfor %}
+</table>
+
+
+</form>
+{% endblock %}

@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from daya_clinic.models import Services, Tips, Employee, Login, Schedule, Feedback, About, Attandance, Contact_details, \
     Patient, book_fee, Slot, Booking, Chat, Medicine, Prescription, Reminder, Leave, Batch, Stock, Sales_master, \
-    Sales_sub
+    Sales_sub, Late_message
 
 
 def homepage(request):
@@ -325,15 +325,17 @@ def adm_add_contact(request):
         cc=cc[0]
 
     return render(request,"ADMIN/add contact info.html",{'data':cc})
-def adm_leave_approval(request):
-    request.session['id']=id
+def adm_leave_approval(request,id):
+    print("fffff")
+
 
     leave_obj = Leave.objects.get(id=id)
     print(leave_obj)
     leave_obj.leave_status = 'Accepted'
     leave_obj.save()
+    print("lllll")
 
-    return render(request,"ADMIN/Leave Approval.html",{'data':leave_obj})
+    return render(request,"ADMIN/homepage.html")
 def adm_accept_leave(request,id):
     if request.method == 'POST':
         print(id)
@@ -346,10 +348,10 @@ def adm_accept_leave(request,id):
         return redirect("/myapp/adm_leave_approval/")
 
 def adm_leave_approval_post(request):
-    if request.method == 'POST':
-        le_obj=Leave("")
 
-    leave_obj = Leave.objects.all()
+
+
+    leave_obj = Leave.objects.filter(leave_status='pending')
     print(leave_obj)
     return render(request,"ADMIN/Leave Approval.html",{'data':leave_obj})
 def admin_view_stock(request):
@@ -624,7 +626,20 @@ def adm_view_patients(request):
         # at_obj=Attandance.objects.filter(date__range=[date1,date1])
         at_obj=Booking.objects.filter(date__range=[date1, date2])
         print(at_obj)
-        return render(request, "ADMIN/View patients.html", {'data': at_obj})
+        ar = []
+        res = []
+        for i in at_obj:
+            if i.PATIENT.id not in ar:
+                s = {'id': i.PATIENT.id, 'name': i.PATIENT.patient_name, 'age': i.PATIENT.age,
+                     'gender': i.PATIENT.gender, 'place': i.PATIENT.place, 'housename': i.PATIENT.housename,
+                     'district': i.PATIENT.district, 'state': i.PATIENT.state, 'phone_number': i.PATIENT.phone_number,
+                     'email': i.PATIENT.emial_Id, 'date': i.date, 'slot': i.slot}
+                res.append(s)
+                ar.append(i.PATIENT.id)
+
+        print(res)
+        return render(request, "ADMIN/View patients.html", {'data': res})
+        # return render(request, "ADMIN/View patients.html", {'data': at_obj})
     else:
         ar=[]
         res=[]
@@ -639,7 +654,7 @@ def adm_view_patients(request):
         for i in book_obj:
             if i.PATIENT.id not in ar:
 
-                s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id,'date':i.date}
+                s={'id':i.PATIENT.id, 'name':i.PATIENT.patient_name,'age':i.PATIENT.age,'gender':i.PATIENT.gender,'place':i.PATIENT.place,'housename':i.PATIENT.housename,'district':i.PATIENT.district,'state':i.PATIENT.state,'phone_number':i.PATIENT.phone_number,'email':i.PATIENT.emial_Id,'date':i.date,'slot':i.slot}
                 res.append(s)
                 ar.append(i.PATIENT.id)
 
@@ -715,10 +730,22 @@ def adm_temp(request):
 
 def doc_temp(request):
     return render(request,"doc_index.html")
+def doc_view_messages(request):
+    docid=request.session['doc_id']
+    chat_obj = Chat.objects.filter(DOCTOR=docid)
+    return render(request,"DOCTOR/view messages.html",{'data':chat_obj})
+
+
+
+
 def doc_view_schedule(request):
     docid=request.session['doc_id']
     schedule_obj = Schedule.objects.filter(EMPPLOYEE_id=docid)
     return render(request,"DOCTOR/View schedule.html",{'data':schedule_obj})
+def doc_view_leave_status(request):
+    docid=request.session['doc_id']
+    leave_obj = Leave.objects.filter(EMPLOYEE=docid)
+    return render(request,"DOCTOR/Leave Status doctor.html",{'data':leave_obj})
 def doc_view_booking(request):
     docid=request.session['doc_id']
     bok_obj = Booking.objects.filter(EMPLOYEE=docid,date=datetime.datetime.now().date())
@@ -1121,7 +1148,24 @@ def doc_add_leave(request):
 
 
     return render(request, "DOCTOR/LEAVE APPLICATION DOCTOR.html")
+def doc_add_late(request):
+    if request.method == 'POST':
+        docid = request.session['doc_id']
+        emp_obj = Employee.objects.get(pk=docid)
+        print(emp_obj)
+        date = request.POST['date']
+        reason = request.POST['reason']
+        time = request.POST['time']
 
+        late_obj = Late_message(EMPPLOYEE=emp_obj,date=date,reason=reason,arriving_time=time)
+        late_obj.save()
+        print(late_obj)
+        #sct
+        text = "<script>alert('Late Arrival Added');window.location='/myapp/homepage_doc/';</script>"
+        return HttpResponse(text)
+
+
+    return render(request, "DOCTOR/late_arrival.html")
 
 
 def doc_next_slot(request):
@@ -1796,7 +1840,13 @@ def view_our_doctors(request):
 def view_schedule(request):
     did=request.POST['did']
     day=request.POST['day']
+    dd=request.POST['dd']
+    print(dd)
+
     doc_obj = Employee.objects.get(id=did)
+    ######
+    # leav_obj=Leave.objects.get(EMPLOYEE=doc_obj,)
+    #########
     print("hhh")
     res2 = []
     ma = Schedule.objects.filter(EMPPLOYEE=doc_obj,day=day)
@@ -2062,8 +2112,86 @@ def view_profile(request):
     return JsonResponse(data)
 
 
+def chatload(request):
+    return render(request,'DOCTOR/fur_chat.html')
 
 
+def drviewmsg(request,receiverid):
+
+    doclidlid=request.session["lid"]
+    print("!!!!!!!!!!",doclidlid,receiverid)
+    log_ob=Login.objects.get(id=doclidlid)
+    doc=Employee.objects.get(LOGIN=log_ob)
+    # print(doc)
+    # stud_ob=studentmodel.objects.get(LID=rec)
+    xx=Patient.objects.get(id=receiverid)
+    print(xx)
+    obj=Chat.objects.filter(DOCTOR=doc,PATIENT=xx)
+    print(obj)
+    user_data=Patient.objects.get(id=receiverid)
+    print(user_data)
+    print("********************",obj)
+
+    res = []
+    for i in obj:
+        s = {'id':i.pk, 'date':i.date,'msg':i.message,'type':i.type}
+        res.append(s)
+    print(res)
+    return JsonResponse({'status': 'ok', 'data': res,'name':user_data.patient_name,'image':"/media/nb.png"})
+
+def chatview(request):
+    print("hai")
+    cid = request.session["lid"]
+    print(cid)
+    mmss = Login.objects.get(id=cid)
+    print(mmss)
+    ms = Employee.objects.get(LOGIN=mmss)
+    print(ms)
+    docid = request.session['doc_id']
+    chat_obj = Chat.objects.filter(DOCTOR=docid)
+    lis=[]
+    for jj in chat_obj:
+        lis.append(jj.PATIENT.id)
+    print("patient id here")
+    print(lis)
+    res = []
+
+    for kk in lis:
+
+
+
+
+        da =Patient.objects.get(id=kk)
+        print(da)
+        s = {'id':da.pk, 'name': da.patient_name, 'email': da.emial_Id, 'image': "/media/nb.png"}
+        res.append(s)
+
+
+
+        print(res)
+        return JsonResponse({'status': 'ok', 'data': res})
+
+
+def doctor_insert_chat(request,receiverid,msg):
+    print("hai riss")
+
+    dlid= request.session["lid"]
+    log_ob=Login.objects.get(id=dlid)
+    dobj=Employee.objects.get(LOGIN=log_ob)
+    import datetime
+    datetime.date.today()  # Returns 2018-01-15
+    showtime=datetime.datetime.now()
+    print("qqq")
+
+    obj=Chat()
+    obj.PATIENT=Patient.objects.get(pk=receiverid)
+    obj.DOCTOR=dobj
+    obj.message=msg
+    obj.type='doctor'
+    obj.date=showtime
+    obj.save()
+    print("yyy")
+    return JsonResponse({'status':'ok'})
 
 
 
