@@ -12,6 +12,8 @@
     <th>Sl.No</th>
     <th >Batch Name</th>
     <th>Quantity</th>
+    <th>Medicine</th>
+    <th>Company</th>
 
 
 
@@ -23,6 +25,8 @@
    <td>{{ forloop.counter }}</td>
     <td>{{ i.BATCH.b_name}}</td>
     <td>{{ i.quantity }}</td>
+    <td>{{ i.BATCH.MEDICINE.name }}</td>
+    <td>{{ i.BATCH.MEDICINE.campany }}</td>
 
     <td align="center"><a href="\myapp\adm_edit_stock\{{ i.pk }}">Edit</a></td>
     <td align="center"><a href="\myapp\adm_delete_stock\{{ i.id }}">Delete</a></td>

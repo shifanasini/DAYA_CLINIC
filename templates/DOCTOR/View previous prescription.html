@@ -10,7 +10,7 @@
         <td>From Date</td>
         <td><input type="date" name="dd1" required class="form-control"></td>
         <td>To Date</td>
-        <td><input type="date" name="dd2" required class="form-control"></td>
+        <td><input type="date" name="dd2" id="date2" required class="form-control"></td>
         <td><input type="submit" name="search" value="Go" class="btn-success"></td>
 
     </tr>
@@ -49,4 +49,18 @@
 </table>
 
 </form>
+      <script>
+       var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth()+1; //January is 0!
+var yyyy = today.getFullYear();
+ if(dd<10){
+        dd='0'+dd
+    }
+    if(mm<10){
+        mm='0'+mm
+    }
+
+today = yyyy+'-'+mm+'-'+dd;
+document.getElementById("date2").setAttribute("max", today);
 {% endblock %}

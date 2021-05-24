@@ -5,6 +5,16 @@ urlpatterns = [
     path('login/', views.login),
     path('adm_add_services/', views.adm_add_services),
     path('adm_view_employee/', views.adm_view_employee),
+    path('adm_offline_patients/', views.adm_offline_patients),
+    path('logout/', views.logout),
+    path('ph_add_leave/', views.ph_add_leave),
+    path('ph_view_leave_status/', views.ph_view_leave_status),
+    path('doc_view_symptoms/<str:bookid>', views.doc_view_symptoms),
+    path('doc_add_symptoms/<str:bookid>', views.doc_add_symptoms),
+    path('doc_add_symptoms_post/', views.doc_add_symptoms_post),
+    path('doc_view_symptoms_post/', views.doc_add_symptoms_post),
+    path('doc_view_symptoms_post/', views.doc_view_symptoms_post),
+
 
     path('adm_add_tips/', views.adm_add_tips),
     path('adm_add_about/', views.adm_add_about),
@@ -78,7 +88,7 @@ urlpatterns = [
     path('homepage_doctor/', views.homepage_doctor),
     path('doc_view_schedule/', views.doc_view_schedule),
     path('doc_view_patients/', views.doc_view_patients),
-    path('doc_view_booking/', views.doc_view_booking),
+    path('doc_view_booking/', views.doc_view_booking,name="doc_view_booking"),
     path('doc_add_next_visit/<str:bookid>', views.doc_add_next_visit),
     path('doc_add_next_visit_post/', views.doc_add_next_visit_post),
     path('doc_view_prescription/<str:bookid>', views.doc_view_prescription),
@@ -140,6 +150,8 @@ urlpatterns = [
     path("view_profile/", views.view_profile),
     path("user_update/", views.user_update),
     path("view_message2/", views.view_message2),
+    path("patient_view_status/", views.patient_view_status),
+    path("view_next_visit/", views.view_next_visit),
 
 
 #####

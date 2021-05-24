@@ -1,10 +1,11 @@
 {% extends  'pharmacist_index.html' %}
 {% block body %}<br><br>
-<h1 align="center">Add sale</h1>
+<h3 STYLE="background-color:#01a9ac;color:white" align="center">SALE</h3>
+    <br><br><br>
 
 <form action="/myapp/add_sale/" method="post"><table align="center" class="table table-bordered" style="width: 400px">
   <tr>
-    <td>Patient name</td>
+    <td style="color: #00acee">Patient name</td>
     <td>{{ pat_name }}</td>
 </tr>
 
@@ -12,6 +13,7 @@
 
 
 </table>
+
 <table align="center" class="table table-bordered" style="width: 1000px">
     <th>Sl.No</th>
     <th>Prescription</th>
@@ -37,15 +39,16 @@
     {% endfor %}
 
 </table>
+ <br><br><br>
 
-
-
+<h3 STYLE="background-color:#01a9ac;color:white" align="center">ADD MEDICINE</h3>
+ <br><br><br>
 <table align="center" class="table table-bordered" style="width: 400px">
   <tr>
     <td>Medicine Name</td>
     <td><select name="select" class="form-control">
         {% for i in data3 %}
-            <option value="{{ i.id }}">{{ i.MEDICINE.name }}-{{ i.b_name }}</option>
+            <option value="{{ i.id }}">{{ i.MEDICINE.name }}-{{ i.MEDICINE.campany }}-{{ i.b_name }}</option>
         {% endfor %}
  </select></td>
   </tr>
@@ -53,18 +56,17 @@
 
   <tr>
     <td>Quantity</td>
-    <td><input type="text" class="form-control" name="qty" ></td>
-  </tr>
+    <td><input type="number" class="form-control" name="qty" ></td>
 
-    <td>Tax</td>
-    <td>&nbsp;</td>
-
-  </tr>
   <tr>
     <td></td>
-    <td><input name="btn" type="submit" value="Add" class="btn-success" /></td>
+    <td><input name="btn" type="submit" value="Add" class="btn-success" style="width: 150px;height: 40px" /></td>
   </tr>
 </table>
+<br><br><br>
+<h3 STYLE="background-color:#01a9ac;color:white" align="center">VIEW MEDICINE</h3>
+<br><br><br>
+
     <table align="center" class="table table-bordered" style="width: 1000px">
   <tr>
     <th>Sl.no</th>
@@ -74,24 +76,27 @@
 
 
     <th>Company</th>
+    <th>Tax</th>
 
        <th>Unit Amount</th>
-      <th>Booking Fee</th>
+      <th>Total Amount</th>
+
 
 
     <th></th>
-    
+
   </tr>
-        {% for i in data4 %}
+        {% for i in tt %}
   <tr>
 
     <td>{{forloop.counter  }}</td>
-    <td>{{ i.BATCH.MEDICINE.name }}</td>
-    <td>{{ i.quantity }}</td>
-    <td>{{ i.BATCH.MEDICINE.unit }}</td>
-    <td>{{ i.BATCH.MEDICINE.campany }}</td>
-    <td>{{ i.BATCH.unit_amount }}</td>
-    <td>{{ i.BATCH. }}</td>
+    <td>{{ i.medname }}</td>
+    <td>{{ i.qnty }}</td>
+    <td>{{ i.unit }}</td>
+    <td>{{ i.cmpy }}</td>
+    <td>{{ i.tax }}</td>
+    <td>{{ i.untamt }}</td>
+      <td>{{ i.tamt }}</td>
 
 
 
@@ -100,9 +105,15 @@
     <td><a href="/myapp/ph_del_salesub/{{ i.pk }}">Remove</a></td>
   </tr>
         {% endfor %}
-  <tr>
-    <td></td>
-    <td><input name="btn" type="submit" value="Finish" class="btn-success"/></td>
+    <tr><td STYLE="color: #0000FF">Booking Fee
+  </td>
+    <td STYLE="color: #0000FF">{{ fee }}</td>
+  <tr><td STYLE="color: #FF0000">Total Amount
+  </td>
+    <td STYLE="color: #FF0000">{{ tm }}</td>
+    </tr>
+    <tr>
+    <td><input name="btn" type="submit" value="Finish" class="btn-success" style="width: 150px;height: 40px;background-color: #0a6aa1"/></td>
   </tr>
 </table>
     </form>

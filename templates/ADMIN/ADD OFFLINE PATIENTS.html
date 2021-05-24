@@ -1,7 +1,7 @@
 {% extends  'adminindex.html' %}
 {% block body %}<br><br>
-<h1 align="center">EMPLOYEE REGISTERATION</h1><br><br>
-<form action="/myapp/adm_employee_registration/" onsubmit="return validate()" method="POST" enctype="multipart/form-data">
+<h2 align="center">ADD OFFLINE PATIENTS</h2><br><br>
+<form action="/myapp/adm_offline_patients/" onsubmit="return validate()" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 <table  class="table table-bordered" style="width: 400px;" align="center">
   <tr>
@@ -9,24 +9,29 @@
     <td><input name="txt_name" id="txt_name" type="text" class="form-control" required  /></td>
   </tr>
   <tr>
-    <td>Date Of Birth</td>
-    <td><input name="txt_dob" id="txt_dob" type="date" class="form-control" required /></td>
+    <td>Age</td>
+    <td><input name="age" id="age" type="number" class="form-control" required /></td>
   </tr>
-  <tr>
-    <td>Type</td>
-    <td><select name="selecttype"  class="form-control"  id="select" required>
-        <option>--Select--</option>
-        <option value="Doctor">Doctor</option>
 
-        <option value="Pharmacist">Pharmacist</option>
-    </select></td>
-  </tr>
   <tr>
     <td>Gender</td>
     <td><input name="radio_gender" type="radio" value="Female" checked />Female
       <input name="radio_gender" type="radio" value="Male" />Male</td>
   </tr>
   <tr>
+       <td>Doctor Name</td>
+    <td><select name="select" class="form-control" required>
+        {% for i in data %}
+            <option value="{{ i.id }}">{{ i.emp_name }}</option>
+        {% endfor %}
+    </select>
+    </td>
+  </tr>
+<tr>
+    <td>Time</td>
+    <td><input name="time" type="time"  class="form-control" required/></td>
+  </tr>
+<tr>
     <td>Place</td>
     <td><input name="txt_place" type="text"  class="form-control" required/></td>
   </tr>
@@ -71,19 +76,7 @@
     <td>Phone Number</td>
     <td><input name="txt_phno" type="text"  class="form-control" required pattern="[789][0-9]{9}"/></td>
   </tr>
-     <tr>
-    <td>Qualification</td>
-    <td><input name="txt_qualification" type="text"   class="form-control"  required/></td>
-  </tr>
 
-  <tr>
-    <td>Photo</td>
-    <td><input name="fileField" type="file"   class="form-control" required/></td>
-  </tr>
-     <tr id="trr">
-    <td>Booking Fee</td>
-    <td><input name="fee" type="text"   class="form-control" value="0" /></td>
- </tr>
     <tr>
         <td colspan="2"align="center">
             <input type="submit" value="ADD" class="btn btn-success"/>
@@ -111,12 +104,9 @@
             var nid = $(this).val();
             if(nid=="Doctor"){
               $("#trr").show();
-
             }
-
-            else if(nid=="Pharmacist"){
+            else {
                  $("#trr").hide();
-
             }
         });
 });

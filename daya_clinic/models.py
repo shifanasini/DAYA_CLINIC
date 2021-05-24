@@ -166,6 +166,7 @@ class Medicine(models.Model):
     type = models.CharField(max_length=50)
     usage = models.CharField(max_length=50)
     unit = models.CharField(max_length=100, default="0")
+    tax = models.CharField(max_length=100, default="0")
 
     campany = models.CharField(max_length=50)
 
@@ -182,6 +183,17 @@ class Prescription(models.Model):
 
     class Meta:
         db_table = "prescription"
+class Symptoms(models.Model):
+    BOOKING = models.ForeignKey(Booking, on_delete=models.CASCADE)
+
+    symptoms = models.CharField(max_length=50)
+
+
+    class Meta:
+        db_table = "symptoms"
+
+
+
 class Batch(models.Model):
 
     MEDICINE= models.ForeignKey(Medicine, on_delete=models.CASCADE)
